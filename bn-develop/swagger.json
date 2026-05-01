@@ -1,0 +1,6196 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "MIS API",
+    "description": "API documentation for MIS",
+    "contact": {
+      "email": "munyeshurimanzi@gmail.com"
+    },
+    "license": {
+      "name": "ISC"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local development server"
+    },
+    {
+      "url": "https://mis-genesistechnologies2024-bn.onrender.com/api",
+      "description": "Production server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@example.com"
+          },
+          "profilePicture": {
+            "type": "string",
+            "description": "URL to user's profile picture"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["male", "female", "other"]
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "address": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "iDNumber": {
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "admin"
+          },
+          "description": {
+            "type": "string",
+            "example": "Administrator role"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["create_user", "approve_expense"]
+          }
+        }
+      },
+      "ExpenseRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "requested_for": {
+            "type": "string",
+            "example": "Office Supplies"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "beneficiary": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 5
+          },
+          "total_amount_paid": {
+            "type": "number",
+            "example": 100.0
+          },
+          "total_amount_to_be_paid": {
+            "type": "number",
+            "example": 800.0
+          },
+          "total_remaining_balance": {
+            "type": "number",
+            "example": 700.0
+          },
+          "expected_payment_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "payment_mode": {
+            "type": "string",
+            "enum": ["Cheque", "Cash", "Transfer"]
+          },
+          "payment_account": {
+            "type": "string",
+            "enum": ["Bank", "Petty Cash"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Pending", "Approved", "Rejected"]
+          },
+          "requestedBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "approvedBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PaymentVoucher": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "voucherNumber": {
+            "type": "string",
+            "description": "Unique voucher identifier"
+          },
+          "expense_request_id": {
+            "$ref": "#/components/schemas/ExpenseRequest"
+          },
+          "amount_paid": {
+            "type": "number",
+            "example": 800.0
+          },
+          "description": {
+            "type": "string",
+            "example": "Payment for Office Supplies"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Generated", "Paid", "Cancelled"],
+            "description": "Current status of the payment voucher"
+          },
+          "generated_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date when the payment voucher was generated"
+          },
+          "payment_mode": {
+            "type": "string",
+            "enum": ["Cheque", "Cash", "Transfer"]
+          },
+          "payment_account": {
+            "type": "string",
+            "enum": ["Bank", "Petty Cash"]
+          },
+          "beneficiary": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "prepared_by": {
+            "$ref": "#/components/schemas/User"
+          },
+          "approved_by": {
+            "$ref": "#/components/schemas/User"
+          },
+          "signed_document": {
+            "type": "string",
+            "description": "URL of the uploaded signed document"
+          },
+          "document_status": {
+            "type": "string",
+            "enum": ["Pending", "Signed"],
+            "description": "Status of the document signing"
+          },
+          "uploaded_by": {
+            "$ref": "#/components/schemas/User"
+          },
+          "upload_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date when the signed document was uploaded"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "user": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "isRead": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ReceivedMoney": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "received_from": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "received_by": {
+            "type": "string"
+          },
+          "approved_by": {
+            "type": "string"
+          },
+          "signed_document": {
+            "type": "string"
+          },
+          "account": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Stock": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "item": {
+            "type": "string",
+            "example": "Laptop"
+          },
+          "category": {
+            "type": "string",
+            "example": "Electronics"
+          },
+          "description": {
+            "type": "string",
+            "example": "Dell XPS 13"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 10
+          },
+          "supplierId": {
+            "type": "string"
+          },
+          "proofOfDelivery": {
+            "type": "string",
+            "description": "URL to proof of delivery document"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Assets": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "item": {
+            "type": "string",
+            "example": "Office Chair"
+          },
+          "purchaseDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "category": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "totalNumber": {
+            "type": "number"
+          },
+          "totalNumberInGoodCondition": {
+            "type": "number"
+          },
+          "totalNumberInCriticalCondition": {
+            "type": "number"
+          },
+          "values": {
+            "type": "number"
+          },
+          "totalValues": {
+            "type": "number"
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "Electronics"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "stockId": {
+            "type": "string"
+          },
+          "transactionType": {
+            "type": "string",
+            "enum": ["IN", "OUT"]
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Procurement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "String"
+          },
+          "tin": {
+            "type": "String"
+          },
+          "phone": {
+            "type": "String"
+          },
+          "email": {
+            "type": "String"
+          },
+          "commodity": {
+            "type": "String"
+          },
+          "address": {
+            "type": "String"
+          },
+          "status": {
+            "type": "String",
+            "enum": ["pending", "approved", "rejected"]
+          },
+          "contract": {
+            "type": "String"
+          }
+        }
+      },
+      "Book": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "isbn": {
+            "type": "string"
+          },
+          "book_name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "author": {
+            "type": "string"
+          },
+          "shelf_number": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_reason": {
+            "type": "string"
+          },
+          "request_status": {
+            "type": "string",
+            "enum": ["Pending", "Approved", "Rejected"]
+          },
+          "approved_by": {
+            "type": "string"
+          },
+          "approved_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PettyCash": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "transaction_type": {
+            "type": "string",
+            "enum": ["expense", "income"]
+          },
+          "amount_paid": {
+            "type": "number"
+          },
+          "amount_received": {
+            "type": "number"
+          },
+          "amount_balance": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          },
+          "reference_id": {
+            "type": "string"
+          }
+        }
+      },
+      "UniformPayment": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string",
+            "description": "The ID of the student making the payment."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the student."
+          },
+          "faculty": {
+            "type": "string",
+            "description": "The faculty of the student."
+          },
+          "level": {
+            "type": "string",
+            "description": "The academic level of the student."
+          },
+          "itemName": {
+            "type": "string",
+            "description": "The name of the item being purchased (only required if fullUniform is 'no')."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the item being purchased (only required if fullUniform is 'no')."
+          },
+          "amountPaid": {
+            "type": "number",
+            "description": "The amount paid by the student."
+          },
+          "modeOfPayment": {
+            "type": "string",
+            "enum": ["Bank", "Petty Cash"],
+            "description": "The payment mode."
+          },
+          "fullUniform": {
+            "type": "string",
+            "enum": ["yes", "no"],
+            "description": "Whether the student is buying a full uniform or specific items."
+          },
+          "proofOfPayment": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "Supplier": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "approved", "rejected"]
+          },
+          "deleteReason": {
+            "type": "string"
+          },
+          "deletedBy": {
+            "type": "string"
+          },
+          "approvedBy": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "contract": {
+            "type": "string"
+          },
+          "tin": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "commodity": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        }
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "payeeType": {
+            "type": "string"
+          },
+          "payeeId": {
+            "type": "string"
+          },
+          "payeeName": {
+            "type": "string"
+          },
+          "amountPaid": {
+            "type": "number"
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "proofOfPaymentUrl": {
+            "type": "string"
+          },
+          "remainingBalance": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "StockMovementReport": {
+        "type": "object",
+        "properties": {
+          "stockItem": {
+            "type": "string"
+          },
+          "transactionType": {
+            "type": "string",
+            "enum": ["IN", "OUT"]
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "LowStockReport": {
+        "type": "object",
+        "properties": {
+          "itemName": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          }
+        }
+      },
+      "TotalStockValueReport": {
+        "type": "object",
+        "properties": {
+          "totalStockValue": {
+            "type": "number"
+          }
+        }
+      },
+      "StockSummaryReport": {
+        "type": "object",
+        "properties": {
+          "itemName": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "totalValue": {
+            "type": "number"
+          }
+        }
+      },
+      "pendingApprovalReport": {
+        "type": "object",
+        "properties": {
+          "finance": {
+            "type": "object"
+          },
+          "totalPendingFinanceRequests": {
+            "type": "number"
+          },
+          "library": {
+            "type": "object"
+          },
+          "totalPendingLibraryRequests": {
+            "type": "number"
+          },
+          "supplier": {
+            "type": "object"
+          },
+          "totalPendingSupplierRequests": {
+            "type": "number"
+          },
+          "employee": {
+            "type": "object"
+          },
+          "totalPendingEmployeeRequests": {
+            "type": "number"
+          }
+        }
+      },
+      "approvedRequestsReport": {
+        "type": "object",
+        "properties": {
+          "finance": {
+            "type": "object"
+          },
+          "totalApprovedFinanceRequests": {
+            "type": "number"
+          },
+          "library": {
+            "type": "object"
+          },
+          "totalApprovedLibraryRequests": {
+            "type": "number"
+          },
+          "supplier": {
+            "type": "object"
+          },
+          "totalApprovedSupplierRequests": {
+            "type": "number"
+          },
+          "employee": {
+            "type": "object"
+          },
+          "totalApprovedEmployeeRequests": {
+            "type": "number"
+          }
+        }
+      },
+      "rejectedRequestReport": {
+        "type": "object",
+        "properties": {
+          "finance": {
+            "type": "object"
+          },
+          "totalRejectedFinanceRequests": {
+            "type": "number"
+          },
+          "library": {
+            "type": "object"
+          },
+          "totalRejectedLibraryRequests": {
+            "type": "number"
+          },
+          "supplier": {
+            "type": "object"
+          },
+          "totalRejectedSupplierRequests": {
+            "type": "number"
+          },
+          "employee": {
+            "type": "object"
+          },
+          "totalRejectedEmployeeRequests": {
+            "type": "number"
+          }
+        }
+      },
+      "pettyCashReport": {
+        "type": "object",
+        "properties": {
+          "summaryReport": {
+            "type": "object",
+            "properties": {
+              "totalExpense": {
+                "type": "number"
+              },
+              "totalIncome": {
+                "type": "number"
+              },
+              "balance": {
+                "type": "number"
+              },
+              "lastUpdatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "PendingUpdate": {
+        "type": "object",
+        "properties": {
+          "stockId": {
+            "type": "string",
+            "description": "ID of the uniform being updated."
+          },
+          "itemName": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "number",
+            "format": "float"
+          },
+          "proofOfDelivery": {
+            "type": "string",
+            "description": "URL of the uploaded proof of delivery."
+          },
+          "requestedBy": {
+            "type": "string",
+            "description": "ID of the user who submitted the request."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Pending", "Approved", "Rejected"]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "payroll": {
+        "employeeId": {
+          "type": "string"
+        },
+        "name": { "type": "string" },
+        "netSalary": { "type": "number" },
+        "date": { "type": "Date" },
+        "advance": { "type": "number" },
+        "remainingAmount": { "type": "number" },
+        "month": { "type": "number" },
+        "year": { "type": "number" },
+        "status": {
+          "type": "string",
+          "enum": ["Paid", "Pending", "Overpaid"]
+        }
+      },
+      "PersonalRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "request_description": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "prepared_by": {
+            "type": "string"
+          },
+          "approved_by": {
+            "type": "string"
+          },
+          "rejected_by": {
+            "type": "string"
+          },
+          "payment_mode": {
+            "type": "string",
+            "enum": ["Cheque", "Cash", "Transfer"]
+          },
+          "payment_account": {
+            "type": "string",
+            "enum": ["Bank", "Petty Cash"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Pending", "Approved", "Rejected"]
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "admin@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "admin123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "userId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User forgot password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "admin@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset link sent to the provided email"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/auth/reset-password/{token}": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Reset user password",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newPassword": {
+                    "type": "string",
+                    "example": "newPassword123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successful"
+          },
+          "401": {
+            "description": "Invalid or expired token"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/auth/resend-reset-link": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Resend password reset link",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "admin@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset link sent to the provided email"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/auth/resend-otp": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Resend OTP",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "example": "1234567890"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP sent to the provided user"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": ["Admins"],
+        "summary": "Get all users",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Admins"],
+        "summary": "Create new user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/CreateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "example": "John"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": "Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "john.doe@example.com"
+                  },
+                  "profilePicture": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "example": "male"
+                  },
+                  "birthDate": {
+                    "type": "string",
+                    "example": "1990-01-01"
+                  },
+                  "address": {
+                    "type": "string",
+                    "example": "123 Main St, Anytown, USA"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "example": "1234567890"
+                  },
+                  "iDNumber": {
+                    "type": "string",
+                    "example": "1234567890"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "schema": {
+              "$ref": "#/definitions/UpdateUser"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/user/disable-user": {
+      "put": {
+        "tags": ["Admins"],
+        "summary": "Diable/enable user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User is now inactive."
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/user/update-password": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user's password",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "example": "oldPassword123"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "example": "newPassword123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          }
+        }
+      }
+    },
+    "/user/supplier/{supplierId}": {
+      "put": {
+        "tags": ["Admins"],
+        "summary": "Approve supplier",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "supplierId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["approved", "rejected"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supplier approved successfully"
+          }
+        }
+      }
+    },
+    "/finance/expense-requests": {
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get all expense requests",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of expense requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ExpenseRequest"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "description": "No expense requests found"
+          },
+          "500": {
+            "description": "Error fetching expense requests"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Finance"],
+        "summary": "Create new expense request",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/ExpenseRequestInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Expense request created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/ExpenseRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required fields"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "500": {
+            "description": "Error creating expense request"
+          }
+        }
+      }
+    },
+    "/finance/expense-requests/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get expense request by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Expense request found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/ExpenseRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "description": "Expense request not found"
+          },
+          "500": {
+            "description": "Error fetching expense request"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Finance"],
+        "summary": "Approve or reject expense request",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["Approved", "Rejected"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Expense request approved and payment voucher generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "paymentVoucher": {
+                      "$ref": "#/definitions/PaymentVoucher"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Expense request already updated"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "description": "Expense request not found"
+          },
+          "500": {
+            "description": "Error approving expense request"
+          }
+        }
+      }
+    },
+    "/finance/payment-vouchers": {
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get all payment vouchers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of payment vouchers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/PaymentVoucher"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          }
+        }
+      }
+    },
+    "/finance/payment-vouchers/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get payment voucher by ID or expense request ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment voucher found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/PaymentVoucher"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "description": "Payment voucher not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Finance"],
+        "summary": "Delete payment voucher by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment voucher deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "description": "Payment voucher not found"
+          }
+        }
+      }
+    },
+    "/user/roles": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all roles",
+        "description": "Retrieves all roles that admin can access",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Roles retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string",
+                            "example": "507f1f77bcf86cd799439011"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "admin"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "Administrator role"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized access"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - User does not have required permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Access denied. Requires admin role."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/roles/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get role by ID",
+        "description": "Retrieves a specific role by its ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the role to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "507f1f77bcf86cd799439011"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "admin"
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "Administrator role"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized access"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - User does not have required permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Access denied. Requires admin role."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Role not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Role not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/vouchers/{voucherId}/upload": {
+      "post": {
+        "tags": ["Finance"],
+        "summary": "Upload signed payment voucher document",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "voucherId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the payment voucher"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "signedDocument": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Signed voucher document file"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed voucher uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "paymentVoucher": {
+                      "$ref": "#/components/schemas/PaymentVoucher"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No file uploaded or invalid request"
+          },
+          "404": {
+            "description": "Payment voucher not found"
+          }
+        }
+      }
+    },
+    "/notification": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Get all notifications for authenticated user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of notifications",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Notification"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No notifications found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/notification/{id}": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Get specific notification",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Notification ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Notification"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Notification not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Notifications"],
+        "summary": "Delete notification",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Notification ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification deleted successfully"
+          },
+          "404": {
+            "description": "Notification not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/notification/{id}/status": {
+      "put": {
+        "tags": ["Notifications"],
+        "summary": "Mark notification as read",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Notification ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification updated successfully"
+          },
+          "404": {
+            "description": "Notification not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/notification/status/all": {
+      "put": {
+        "tags": ["Notifications"],
+        "summary": "Mark all notifications as read",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All notifications updated successfully"
+          },
+          "404": {
+            "description": "No notifications found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/finance/received-money": {
+      "post": {
+        "tags": ["Finance"],
+        "summary": "Create new received money record",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "amount": {
+                    "type": "number"
+                  },
+                  "received_from": {
+                    "type": "string"
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "account": {
+                    "type": "string",
+                    "enum": ["Petty Cash", "Bank"]
+                  },
+                  "signed_document": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "date",
+                  "amount",
+                  "received_from",
+                  "reason",
+                  "account",
+                  "signed_document"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Received money created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "receivedMoney": {
+                      "$ref": "#/components/schemas/ReceivedMoney"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get all received money records",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of received money records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "receivedMoney": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ReceivedMoney"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/received-money/{id}": {
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get received money record by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Received money record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Received money record found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "receivedMoney": {
+                      "$ref": "#/components/schemas/ReceivedMoney"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Finance"],
+        "summary": "Delete received money record",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Received money record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Received money record deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock": {
+      "get": {
+        "tags": ["Stock"],
+        "summary": "Get all stock items",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of stock items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Stock"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Stock"],
+        "summary": "Create new stock item",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "item": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "number"
+                  },
+                  "supplierId": {
+                    "type": "string"
+                  },
+                  "proofOfDelivery": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "unity": {
+                    "type": "String",
+                    "enum": ["kg", "liter", "unit", "meter", "box", "piece"]
+                  },
+                  "unityPrice": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Stock item created successfully"
+          }
+        }
+      }
+    },
+    "/stock/{stockId}": {
+      "get": {
+        "tags": ["Stock"],
+        "summary": "Get stock item by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stock item found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stock"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Stock"],
+        "summary": "Update stock item",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "item": {
+                    "type": "string",
+                    "example": "Laptop"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "This is a laptop"
+                  },
+                  "supplierId": {
+                    "type": "string"
+                  },
+                  "proofOfDelivery": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stock item updated successfully"
+          }
+        }
+      }
+    },
+    "/stock/{stockId}/stockout": {
+      "post": {
+        "tags": ["Stock"],
+        "summary": "Remove items from stock",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quantity": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Items removed from stock successfully"
+          }
+        }
+      }
+    },
+    "/stock/category": {
+      "post": {
+        "tags": ["Stock"],
+        "summary": "Create new category",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Category"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created successfully"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Stock"],
+        "summary": "Get all categories",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock/category/{id}": {
+      "get": {
+        "tags": ["Stock"],
+        "summary": "Get category by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Category"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock/assets": {
+      "post": {
+        "tags": ["Stock"],
+        "summary": "Create new asset",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Assets"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Asset created successfully"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Stock"],
+        "summary": "Get all assets",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of assets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Assets"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock/assets/{id}": {
+      "get": {
+        "tags": ["Stock"],
+        "summary": "Get asset by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Assets"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Stock"],
+        "summary": "Update asset",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Assets"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Asset updated successfully"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Stock"],
+        "summary": "Delete asset",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset deleted successfully"
+          },
+          "400": {
+            "description": "Asset not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/stock/{stockId}/transactions": {
+      "get": {
+        "tags": ["Stock"],
+        "summary": "Get transactions for a stock item",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/CreateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock/transactions": {
+      "get": {
+        "tags": ["Stock"],
+        "summary": "Get all transactions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/procurement/supplier": {
+      "post": {
+        "tags": ["Procurement"],
+        "summary": "Create new supplier",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "tin": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "commodity": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "contract": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Procurement created successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Procurement"],
+        "summary": "Get all suppliers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of suppliers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Supplier"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/procurement/supplier/{id}/delete-request": {
+      "post": {
+        "tags": ["Procurement"],
+        "summary": "Send supplier deletion request",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Supplier ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "example": "Supplier is no longer in business"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supplier deletion request approved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Supplier"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Admins"],
+        "summary": "Approve or reject supplier deletion request",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Supplier ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["approved", "rejected"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supplier deletion request approved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Supplier"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/procurement/supplier/{id}": {
+      "get": {
+        "tags": ["Procurement"],
+        "summary": "Get supplier by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Supplier found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Supplier"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Procurement"],
+        "summary": "Update supplier",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/definitions/Supplier"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supplier updated successfully"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Procurement"],
+        "summary": "Delete supplier",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Supplier deleted successfully"
+          }
+        }
+      }
+    },
+    "/library/books": {
+      "post": {
+        "tags": ["Library"],
+        "summary": "Create a new book",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Create a new book with the required fields",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "isbn": {
+                    "type": "string"
+                  },
+                  "book_name": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "number"
+                  },
+                  "author": {
+                    "type": "string"
+                  },
+                  "shelf_number": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "isbn",
+                  "book_name",
+                  "quantity",
+                  "author",
+                  "shelf_number"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Book created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Library"],
+        "summary": "Get all books",
+        "description": "Get all books with the required fields",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of books",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Book"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No books found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/library/books/{id}": {
+      "get": {
+        "tags": ["Library"],
+        "summary": "Get a book by ID",
+        "description": "Get a book by ID with the required fields",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Book not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Library"],
+        "summary": "Update a book",
+        "description": "Update a book with the required fields",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Book not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Library"],
+        "summary": "Delete a book",
+        "description": "Delete a book with the required fields",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Book not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/library/books/{id}/deletion-request": {
+      "post": {
+        "tags": ["Library"],
+        "summary": "Request deletion of a book",
+        "description": "Create a request to delete a book with a reason",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Book ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "description": "Reason for book deletion"
+                  }
+                },
+                "required": ["reason"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Deletion request created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required fields"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Library"],
+        "summary": "Handle book deletion request",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Approve or reject a book deletion request (Admin only)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Book ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["Approved", "Rejected"],
+                    "description": "Status of the deletion request"
+                  }
+                },
+                "required": ["status"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request handled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status"
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/library/deletion-requests": {
+      "get": {
+        "tags": ["Library"],
+        "summary": "Get all pending deletion requests",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Retrieve all pending book deletion requests (Admin only)",
+        "responses": {
+          "200": {
+            "description": "List of deletion requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Book"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "No pending requests found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/library/deletion-requests/{id}": {
+      "get": {
+        "tags": ["Library"],
+        "summary": "Get deletion request by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Retrieve a specific book deletion request by ID (Admin only)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Deletion Request ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deletion request details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Deletion request not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/finance/petty-cash": {
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get all petty cash entries",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Retrieve all petty cash entries",
+        "responses": {
+          "200": {
+            "description": "List of petty cash entries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PettyCash"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "No petty cash entries found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/finance/petty-cash/{id}": {
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get petty cash entry by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Retrieve a specific petty cash entry by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Petty Cash Entry ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Petty cash entry details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PettyCash"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Petty cash entry not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/finance/uniform-payment": {
+      "post": {
+        "tags": ["Finance"],
+        "summary": "Create uniform payment",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/definitions/UniformPayment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Uniform payment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UniformPayment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/get-payroll-by-month-year": {
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get payroll for a specific month and year",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "month",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payroll for the specified month and year",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Payroll"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid month or year"
+          },
+          "404": {
+            "description": "No payroll found for the specified month and year"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/stock/uniform-payment/{id}/approve": {
+      "put": {
+        "tags": ["Stock"],
+        "summary": "Approve uniform payment",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "approval": {
+                    "type": "boolean",
+                    "example": true,
+                    "enum": ["true", "false"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform payment approved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UniformPayment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock/uniform-payment": {
+      "get": {
+        "tags": ["Stock", "Finance"],
+        "summary": "Get all uniform payments",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of uniform payments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UniformPayment"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "No uniform payments found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/stock/uniform-payment/{id}": {
+      "get": {
+        "tags": ["Stock", "Finance"],
+        "summary": "Get uniform payment by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "description": "Get uniform payment by uniform payment id",
+        "responses": {
+          "200": {
+            "description": "Uniform payment details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UniformPayment"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Uniform payment not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/finance/payments": {
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get all payments",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of payments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Payment"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "No payments found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/finance/payments/{id}": {
+      "get": {
+        "tags": ["Finance"],
+        "summary": "Get payment by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Payment ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment details",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/Payment"
+              }
+            }
+          },
+          "404": {
+            "description": "Payment not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/hr/employee": {
+      "get": {
+        "tags": ["HR"],
+        "summary": "Get all employees",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of employees",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Employee"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "No employees found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["HR"],
+        "summary": "Create new employee",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "department": {
+                    "type": "string"
+                  },
+                  "occupation": {
+                    "type": "string"
+                  },
+                  "netSalary": {
+                    "type": "number"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "nationalId": {
+                    "type": "string"
+                  },
+                  "nationality": {
+                    "type": "string",
+                    "example": ["rwandan", "foreigner"]
+                  },
+                  "nationalIdPdf": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "contractPdf": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "visaPdf": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "passportPdf": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "dateOfJoining": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Employee created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Employee"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/hr/employee/{id}": {
+      "get": {
+        "tags": ["HR"],
+        "summary": "Get employee by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee details",
+            "content": {
+              "application/json": {
+                "$ref": "#/definitions/Employee"
+              }
+            }
+          },
+          "404": {
+            "description": "Employee not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": ["HR"],
+        "summary": "Update employee",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "department": {
+                    "type": "string"
+                  },
+                  "occupation": {
+                    "type": "string"
+                  },
+                  "netSalary": {
+                    "type": "number"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "nationalId": {
+                    "type": "string"
+                  },
+                  "nationality": {
+                    "type": "string",
+                    "example": ["rwandan", "foreigner"]
+                  },
+                  "nationalIdPdf": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "contractPdf": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "visaPdf": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "passportPdf": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "dateOfJoining": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Employee"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Employee not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["HR"],
+        "summary": "Delete employee",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee deleted successfully"
+          },
+          "404": {
+            "description": "Employee not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/report/stock-summary": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get stock summary report",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stock summary report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockSummaryReport"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/report/low-stock": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get low stock report",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Low stock report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LowStockReport"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/report/stock-movement": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get stock movement report",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stock movement report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockMovementReport"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "400": {
+            "description": "Invalid date range"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/report/total-stock-value": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get total stock value report",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total stock value report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TotalStockValueReport"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/auth/verify-otp": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Verify OTP",
+        "description": "Verify OTP sent to user's email",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "otp": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP verified successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "object",
+                          "properties": {
+                            "_id": {
+                              "type": "string"
+                            },
+                            "roleName": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or expired OTP"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/report/pending-approvals": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get summary report of all pending approval requests",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "all pending approval requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pendingApprovalReport"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/report/approved-requests": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get summary report of all approved requests",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "all approved requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/approvedRequestsReport"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/report/rejected-requests": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get summary report of all rejected requests",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "all rejected requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/rejectedRequestReport"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/report/petty-cash": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get summary report of all total petty cash entries",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "all total petty cash entries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pettyCashReport"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/user/employee/{employeeId}": {
+      "put": {
+        "tags": ["Admins"],
+        "summary": "Approve or reject employee creation request",
+        "description": "Approve or reject employee creation request",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "employeeId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Employee ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["approved", "rejected"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Employee"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Employee not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/hr/employee/{id}/delete-request": {
+      "post": {
+        "tags": ["HR"],
+        "summary": "Send employee deletion request",
+        "description": "send employee deletion request",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Employee ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "delete_reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee delete request sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Employee"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Employee not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Admins"],
+        "summary": "Approve or reject employee deletion request",
+        "description": "Approve or reject employee deletion request",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Employee ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "delete_status": {
+                    "type": "string",
+                    "enum": ["approved", "rejected"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee deletion request handled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Employee"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Employee not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/hr/employee-delete-requests": {
+      "get": {
+        "tags": ["HR"],
+        "summary": "Get all pending employee deletion requests",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Retrieve all pending employee deletion requests (Admin only)",
+        "responses": {
+          "200": {
+            "description": "List of employee deletion requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Employee"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "No pending requests found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/hr/employee-delete-requests/{id}": {
+      "get": {
+        "tags": ["HR"],
+        "summary": "Get employee deletion request by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Retrieve a specific employee deletion request by ID (Admin only)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Employee Deletion Request ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee deletion request details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Employee"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Employee deletion request not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/finance/uniform": {
+      "get": {
+        "tags": ["Uniform"],
+        "summary": "Retrieve available item names for a uniform.",
+        "description": "Get the list of item names (e.g., 'jersey', 'shorts') for a given uniform.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "item",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the uniform (e.g., 'sports uniform')"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of uniform items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "itemNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "No uniform items found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/stock/uniform": {
+      "post": {
+        "tags": ["Uniform"],
+        "summary": "Record Uniform items in stock",
+        "description": "Create a new uniform item in stock",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/definitions/Uniform"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform item created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Uniform"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/stock/all-uniforms": {
+      "get": {
+        "tags": ["Uniform"],
+        "summary": "Get all uniforms in stock",
+        "description": "Retrieve all uniforms in stock",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of uniforms",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Uniform"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/stock/update-uniform-stock/{id}": {
+      "put": {
+        "tags": ["Uniform"],
+        "summary": "Update uniform stock",
+        "description": "Update an uniform in stock by stockkeeper",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Update-uniform"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform stock updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Uniform"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/stock/update-uniform-items/{id}": {
+      "put": {
+        "tags": ["Uniform"],
+        "summary": "Submit an update request for a uniform item.",
+        "description": "Allows a stockkeeper to submit a request to update item details, which requires admin approval.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "itemName": {
+                    "type": "string",
+                    "description": "Name of the item being updated."
+                  },
+                  "itemQuantity": {
+                    "type": "integer",
+                    "description": "Quantity of the item to be added."
+                  },
+                  "itemPrice": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "Price of the item (required for new items)."
+                  },
+                  "proofOfDelivery": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Proof of delivery for the requested change."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform items updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Update request submitted successfully. Pending admin approval."
+                    },
+                    "pendingUpdate": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/user/pending-updates/{requestId}/review": {
+      "put": {
+        "tags": ["Admins"],
+        "summary": "Review a pending update request.",
+        "description": "Allows an admin to review a pending update request for a user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": ["Approve", "Reject"],
+                    "description": "Action to perform on the pending request."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update request reviewed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Update request reviewed successfully."
+                    },
+                    "pendingUpdate": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/student/":{
+      "post":{
+        "tags":["Student"],
+        "summary":"Create a new student",
+        "description":"Create a new student account",
+        "security":[
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "requestBody":{
+          "required":true,
+          "content":{
+            "application/json":{
+              "schema":{
+                "$ref":"#/definitions/CreateStudent"
+              }
+            }
+          }
+        },
+        "responses":{
+          "201":{
+            "description":"User created successfully",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "$ref":"#/definitions/User"
+                }
+              }
+            }
+          },
+          "400":{
+            "description":"Bad Request"
+          }
+        }
+      },
+      "get":{
+        "tags":["Student"],
+        "summary":"Get all students",
+        "description":"Retrieve all students",
+        "security":[
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "responses":{
+          "200":{
+            "description":"List of students",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "type":"array",
+                  "items":{
+                    "$ref":"#/definitions/User"
+                  }
+                }
+              }
+            }
+          },
+          "403":{
+            "description":"Not authorized"
+          },
+          "500":{
+            "description":"Internal server error"
+          }
+        }
+      }
+    },
+    "/stock/paper-blade":{
+      "post":{
+        "tags":["Stock"],
+        "summary":"Add a new paper blade",
+        "description":"Add a new paper blade to stock",
+        "security":[
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "requestBody":{
+          "required":true,
+          "content":{
+            "application/json":{
+              "schema":{
+                "$ref":"#/definitions/CreatePaperBlade"
+              }
+            }
+          }
+        },
+        "responses":{
+          "201":{
+            "description":"Paper blade created successfully",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "$ref":"#/definitions/PaperBlade"
+                }
+              }
+            }
+          },
+          "400":{
+            "description":"Bad Request"
+          }
+        }
+      }
+    },
+    "/stock/get-paper-blades":{
+      "get":{
+        "tags":["Stock"],
+        "summary":"Get a paper blades",
+        "description":"Retrieve a paper blades",
+        "security":[
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "responses":{
+          "200":{
+            "description":"Paper blade found",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "$ref":"#/definitions/CreatePaperBlade"
+                }
+              }
+            }
+          },
+          "404":{
+            "description":"Paper blade not found"
+          },
+          "500":{
+            "description":"Internal server error"
+          }
+        }
+      }
+    },
+    "/stock/usage-paper-blades":{
+      "post":{
+        "tags":["Stock"],
+        "summary":"Update paper blade usage",
+        "description":"Update paper blade usage",
+        "security":[
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "requestBody":{
+          "required":true,
+          "content":{
+            "application/json":{
+              "schema":{
+                "$ref":"#/definitions/CreatePaperBlade"
+              }
+            }
+          }
+        },
+        "responses":{
+          "200":{
+            "description":"Paper blade usage updated successfully",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "$ref":"#/definitions/PaperBlade"
+                }
+              }
+            }
+          },
+          "400":{
+            "description":"Bad Request"
+          }
+        }
+      }
+    },
+    "/user/personal-request": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Submit a personal request",
+        "description": "Allows a user to submit a personal request.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/definitions/PersonalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Personal request created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Personal request created successfully."
+                    },
+                    "personalRequest": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/user/personal-requests": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all personal requests",
+        "description": "Retrieve all personal requests",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of personal requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "No personal requests found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/user/personal-request/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get a personal request by ID",
+        "description": "Retrieve a personal request by its ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Personal request found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Personal request not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update a personal request",
+        "description": "Approve or reject a personal request",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["Approved", "Rejected"],
+                    "description": "Status of the personal request"
+                  }
+                },
+                "required": ["status"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Personal request updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Personal request not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/finance/process-personal-request/{id}": {
+      "post": {
+        "tags": ["Finance"],
+        "summary": "Process a personal request",
+        "description": "Process a personal request",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payment_mode": {
+                    "type": "string",
+                    "enum": ["Cash", "Cheque", "Transfer"]
+                  },
+                  "payment_account": {
+                    "type": "string",
+                    "enum": ["Bank", "Petty Cash"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Personal request updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Personal request not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CreateUser": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "example": "John"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "example": "john.doe@example.com"
+        },
+        "role_id": {
+          "type": "string",
+          "example": "666666666666666666666666"
+        }
+      }
+    },
+    "CreateStudent":{
+      "type": "object",
+      "properties": {
+        "name":{
+          "type": "string",
+          "example": "John Doe"
+        },
+        "studentId":{
+          "type": "string",
+          "example": "1234567890"
+        },
+        "faculty":{
+          "type": "string",
+          "example": "Computer Science"
+        }
+      }
+    },
+    "CreatePaperBlade":{
+      "type": "object",
+      "properties": {
+        "studentId": {
+          "type": "string",
+          "example": "1234567890"
+        },
+        "quantityBrought": {
+          "type": "integer",
+          "example": 100
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "example": "John"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "example": "john.doe@example.com"
+        },
+        "profilePicture": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string",
+          "example": "male"
+        },
+        "birthDate": {
+          "type": "string",
+          "example": "1990-01-01"
+        },
+        "address": {
+          "type": "string",
+          "example": "123 Main St, Anytown, USA"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "example": "1234567890"
+        },
+        "iDNumber": {
+          "type": "string",
+          "example": "1234567890"
+        },
+        "role": {
+          "$ref": "#/definitions/Role"
+        },
+        "isActive": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "UpdateUser": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "example": "John"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "example": "john.doe@example.com"
+        },
+        "profilePicture": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string",
+          "example": "male"
+        },
+        "birthDate": {
+          "type": "string",
+          "example": "1990-01-01"
+        },
+        "address": {
+          "type": "string",
+          "example": "123 Main St, Anytown, USA"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "example": "1234567890"
+        },
+        "iDNumber": {
+          "type": "string",
+          "example": "1234567890"
+        }
+      }
+    },
+    "Role": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "roleName": {
+          "type": "string",
+          "example": "admin"
+        },
+        "description": {
+          "type": "string",
+          "example": "Administrator role"
+        }
+      }
+    },
+    "ExpenseRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string",
+          "example": "Office Supplies"
+        },
+        "employeeId": {
+          "type": "string"
+        },
+        "supplierId": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string",
+          "enum": ["advance", "expense", "salary"]
+        },
+        "description": {
+          "type": "string",
+          "example": "Monthly office supplies request"
+        },
+        "amount": {
+          "type": "number",
+          "example": 500.0
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "approved", "rejected"],
+          "example": "pending"
+        },
+        "requestedBy": {
+          "$ref": "#/definitions/User"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ExpenseRequestInput": {
+      "type": "object",
+      "required": [
+        "requested_for",
+        "beneficiary",
+        "total_amount_paid",
+        "expected_payment_date",
+        "payment_mode",
+        "payment_account",
+        "reason"
+      ],
+      "properties": {
+        "requested_for": {
+          "type": "string",
+          "example": "other"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "employeeId": {
+          "type": "string"
+        },
+        "supplierId": {
+          "type": "string"
+        },
+        "beneficiary": {
+          "type": "string",
+          "example": "John Doe"
+        },
+        "quantity": {
+          "type": "number",
+          "example": 5
+        },
+        "reason": {
+          "type": "string",
+          "enum": ["advance", "expense", "salary"]
+        },
+        "total_amount_paid": {
+          "type": "number",
+          "example": 100.0
+        },
+        "total_amount_to_be_paid": {
+          "type": "number",
+          "example": 800.0
+        },
+        "expected_payment_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "payment_mode": {
+          "type": "string",
+          "enum": ["Cheque", "Cash", "Transfer"],
+          "example": "Cheque"
+        },
+        "payment_account": {
+          "type": "string",
+          "enum": ["Bank", "Petty Cash"],
+          "example": "Bank"
+        }
+      }
+    },
+    "PaymentVoucher": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "Notification": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "isRead": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ReceivedMoney": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "amount": {
+          "type": "number"
+        },
+        "received_from": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "received_by": {
+          "type": "string"
+        },
+        "approved_by": {
+          "type": "string"
+        },
+        "signed_document": {
+          "type": "string"
+        },
+        "account": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Supplier": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "tin": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "commodity": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "contract": {
+          "type": "string",
+          "format": "binary"
+        }
+      }
+    },
+    "Procurement": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "String"
+        },
+        "tin": {
+          "type": "String"
+        },
+        "phone": {
+          "type": "String"
+        },
+        "email": {
+          "type": "String"
+        },
+        "commodity": {
+          "type": "String"
+        },
+        "address": {
+          "type": "String"
+        },
+        "status": {
+          "type": "String",
+          "enum": ["pending", "approved", "rejected"]
+        },
+        "contract": {
+          "type": "String"
+        }
+      }
+    },
+    "Book": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "isbn": {
+          "type": "string"
+        },
+        "book_name": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "number"
+        },
+        "author": {
+          "type": "string"
+        },
+        "shelf_number": {
+          "type": "string"
+        },
+        "deleted": {
+          "type": "boolean"
+        },
+        "deleted_by": {
+          "type": "string"
+        },
+        "deleted_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "deleted_reason": {
+          "type": "string"
+        },
+        "request_status": {
+          "type": "string",
+          "enum": ["Pending", "Approved", "Rejected"]
+        },
+        "approved_by": {
+          "type": "string"
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "PettyCash": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "transaction_type": {
+          "type": "string",
+          "enum": ["expense", "income"]
+        },
+        "amount_paid": {
+          "type": "number"
+        },
+        "amount_received": {
+          "type": "number"
+        },
+        "amount_balance": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "reference_id": {
+          "type": "string"
+        },
+        "reference_model": {
+          "type": "string"
+        }
+      }
+    },
+    "UniformPayment": {
+      "type": "object",
+      "properties": {
+        "studentId": {
+          "type": "string",
+          "description": "The ID of the student making the payment."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the student."
+        },
+        "faculty": {
+          "type": "string",
+          "description": "The faculty of the student."
+        },
+        "level": {
+          "type": "string",
+          "description": "The academic level of the student."
+        },
+        "itemName": {
+          "type": "string",
+          "description": "The name of the item being purchased (only required if fullUniform is 'no')."
+        },
+        "quantity": {
+          "type": "integer",
+          "description": "The quantity of the item being purchased (only required if fullUniform is 'no')."
+        },
+        "amountPaid": {
+          "type": "number",
+          "description": "The amount paid by the student."
+        },
+        "modeOfPayment": {
+          "type": "string",
+          "enum": ["Bank", "Petty Cash"],
+          "description": "The payment mode."
+        },
+        "fullUniform": {
+          "type": "string",
+          "enum": ["yes", "no"],
+          "description": "Whether the student is buying a full uniform or specific items."
+        },
+        "proofOfPayment": {
+          "type": "string",
+          "format": "binary",
+          "description": "File upload for proof of payment."
+        }
+      }
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Assets": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "example": "Office Chair"
+        },
+        "purchaseDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "category": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "totalNumber": {
+          "type": "number"
+        },
+        "totalNumberInGoodCondition": {
+          "type": "number"
+        },
+        "totalNumberInCriticalCondition": {
+          "type": "number"
+        },
+        "values": {
+          "type": "number"
+        }
+      }
+    },
+    "Employee": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "John Doe"
+        },
+        "department": {
+          "type": "string",
+          "example": "Engineering"
+        },
+        "occupation": {
+          "type": "String",
+          "example": "Software Engineer"
+        },
+        "type": {
+          "type": "string",
+          "example": "Full-time"
+        },
+        "nationality": {
+          "type": "string",
+          "enum": "[rwandan, foreigner]",
+          "example": "rwandan"
+        },
+        "nationalId": {
+          "type": "string",
+          "example": "1199000000000000"
+        },
+        "nationalIdPdf": {
+          "type": "string",
+          "format": "uri",
+          "example": "https://example.com/files/nationalid.pdf"
+        },
+        "visaPdf": {
+          "type": "string",
+          "format": "uri",
+          "example": "https://example.com/files/visa.pdf"
+        },
+        "passportPdf": {
+          "type": "string",
+          "format": "uri",
+          "example": "https://example.com/files/passport.pdf"
+        },
+        "contractPdf": {
+          "type": "string",
+          "format": "uri",
+          "example": "https://example.com/files/contract.pdf"
+        },
+        "dateOfJoining": {
+          "type": "string",
+          "format": "date",
+          "example": "2024-01-08"
+        },
+        "netSalary": {
+          "type": "number",
+          "example": 50000
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "john.doe@example.com"
+        },
+        "phone": {
+          "type": "string",
+          "example": "+250700000000"
+        }
+      }
+    },
+    "Uniform": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+
+        "supplierId": {
+          "type": "string"
+        },
+        "proofOfDelivery": {
+          "type": "string",
+          "format": "binary"
+        },
+        "fullUniform": {
+          "type": "boolean",
+          "enum": ["true", "false"]
+        },
+        "fullUniformPrice": {
+          "type": "number"
+        },
+        "itemName": {
+          "type": "string"
+        },
+        "itemPrice": {
+          "type": "number"
+        },
+        "itemQuantity": {
+          "type": "string"
+        }
+      }
+    },
+    "Update-uniform": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "enum": ["full uniform", "partial uniform"]
+        },
+        "category": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+
+        "supplierId": {
+          "type": "string"
+        },
+        "proofOfDelivery": {
+          "type": "string",
+          "format": "binary"
+        },
+        "fullUniform": {
+          "type": "boolean",
+          "enum": ["true", "false"]
+        },
+        "fullUniformPrice": {
+          "type": "number"
+        }
+      }
+    },
+    "PersonalRequest": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "type": "string"
+        },
+        "request_description": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}
