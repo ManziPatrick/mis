@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: mis-backend
+    env: node
+    plan: free
+    rootDir: bn-develop
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_VERSION
+        value: 20
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: "http://localhost:3000,https://mis-fn.vercel.app" # User should update this in Render dashboard

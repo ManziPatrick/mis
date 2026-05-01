@@ -22,7 +22,9 @@ const app: Express = express();
 const port = process.env.PORT || 5000;
 const server = createServer(app);
 
-const allowedOrigins = ['http://localhost:3000', 'https://mis-fn.vercel.app'];
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+    ? process.env.ALLOWED_ORIGINS.split(',') 
+    : ['http://localhost:3000', 'https://mis-fn.vercel.app'];
 
 export const io = new Server(server, {
     cors: {
