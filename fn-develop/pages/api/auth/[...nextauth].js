@@ -16,10 +16,12 @@ const options = {
         }
 
         try {
+          console.log("Attempting login for:", credentials.email);
           const response = await API.post(`/auth/login`, {
             email: credentials.email,
             password: credentials.password,
           });
+          console.log("Backend response status:", response.status);
           if (response?.data?.token) {
             const { token, user } = response?.data;
             return {
@@ -28,6 +30,7 @@ const options = {
               role: user.role
             };
           } else {
+            console.log("No token in backend response");
             return null;
           }
         } catch (error) {
