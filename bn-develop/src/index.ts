@@ -24,7 +24,7 @@ const server = createServer(app);
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
     ? process.env.ALLOWED_ORIGINS.split(',') 
-    : ['http://localhost:3000', 'https://mis-fn.vercel.app'];
+    : ['http://localhost:3000', 'https://mis-fn.vercel.app', 'https://mis-78wi.vercel.app'];
 
 export const io = new Server(server, {
     cors: {
@@ -36,7 +36,10 @@ export const io = new Server(server, {
 
 setupNotificationSocket(io);
 
-app.use(cors());
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true
+}));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
