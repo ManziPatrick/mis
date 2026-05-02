@@ -3,7 +3,9 @@ import { useEffect } from "react";
 import { io } from "socket.io-client";
 import { useSession } from "next-auth/react";
 
-const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL as string);
+const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000", {
+  autoConnect: false,
+});
 
 export const joinRoom = async () => {
   if (typeof window !== "undefined") {
