@@ -73,7 +73,7 @@ const LoginContent = () => {
                     joinRoom();
                     console.log("Login successful, role:", role);
 
-                    if (["superadmin", "admin", "finance", "stock", "procurement", "hr"].includes(role)) {
+                    if (["superadmin", "admin", "finance", "stock", "procurement", "hr", "headteacher", "dht", "logistics", "md", "teacher", "workshopassistant"].includes(role)) {
                         navigate.push(`/${role}`);
                     } else if (role === "librarian") {
                         navigate.push("/library");
@@ -127,7 +127,7 @@ const LoginContent = () => {
 
                         if (["superadmin", "admin", "finance", "stock", "procurement", "hr", "headteacher", "dht", "logistics", "md", "teacher", "workshopassistant"].includes(session.user.role)) {
                             localStorage.removeItem('currentUserId')
-                            navigate.push(session.user.role)
+                            navigate.push(`/${session.user.role}`)
                         } else if (session.user.role === "librarian") {
                             localStorage.removeItem('currentUserId')
                             navigate.push("/library")
