@@ -135,7 +135,9 @@ export const userCreateAssetMutation = () => {
   return useMutation({
     mutationKey: ["create-asset"],
     mutationFn: async (data: any) => {
-      const response = await API.post("/stock/assets", data);
+      const response = await API.post("/stock/assets", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return response.data;
     },
   });
@@ -280,8 +282,55 @@ export const useUpdateStock = () => {
 export const useUpdateAsset = () => {
   return useMutation({
     mutationKey: ["update-asset"],
-    mutationFn: async (data: any) => {
-      const response = await API.put(`/stock/assets/${data.id}`, data);
+    mutationFn: async (data: FormData) => {
+      // We assume the id is appended to the FormData
+      const id = data.get('id');
+      const response = await API.put(`/stock/assets/${id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data;
+    },
+  });
+};
+
+export const useGetAllAssetAssignments = () => {
+  return useQuery({
+    queryKey: ["asset-assignments"],
+    queryFn: async () => {
+      const response = await API.get("/stock/asset-assignments");
+      return response.data;
+    },
+  });
+};
+
+interface AssignAssetType {
+  studentId: string;
+  conditionOnAssignment: string;
+  assetId: string;
+}
+
+export const useAssignAsset = () => {
+  return useMutation({
+    mutationKey: ["assign-asset"],
+    mutationFn: async (data: AssignAssetType) => {
+      const response = await API.post(`/stock/assets/${data.assetId}/assign`, data);
+      return response.data;
+    },
+  });
+};
+
+interface ReturnAssetType {
+  assignmentId: string;
+  conditionOnReturn: string;
+}
+
+export const useReturnAsset = () => {
+  return useMutation({
+    mutationKey: ["return-asset"],
+    mutationFn: async (data: ReturnAssetType) => {
+      const response = await API.post(`/stock/asset-assignments/${data.assignmentId}/return`, {
+        conditionOnReturn: data.conditionOnReturn
+      });
       return response.data;
     },
   });

@@ -10,6 +10,8 @@ import procurementRoutes from './procurementRoutes';
 import hrRoutes from './hrRoutes';
 import reportRoutes from './reportRoutes';
 import studentRouter from './studentRoutes';
+import formsRouter from './formsRoutes';
+
 const router = Router();
 
 router.use('/auth', authRoutes);
@@ -20,7 +22,8 @@ router.use('/library', libraryRoutes);
 router.use('/stock', stockRoutes);
 router.use('/procurement', procurementRoutes);
 router.use('/hr', hrRoutes);
-router.use('/student', studentRouter)
-router.use('/report',reportRoutes);
+router.use('/student', studentRouter);
+router.use('/report', reportRoutes);
+router.use('/forms', formsRouter);
 
 export default router;

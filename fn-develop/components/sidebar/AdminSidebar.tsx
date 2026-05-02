@@ -37,7 +37,7 @@ const adminSidebar = () => {
     };
 
     const ApproveLogout = async () => {
-        Logout()
+        await Logout()
     }
 
     return (

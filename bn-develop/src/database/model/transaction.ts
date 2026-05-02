@@ -5,7 +5,17 @@ const transactionSchema = new mongoose.Schema<ITransaction>({
   stockId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Stock",
-    required: true,
+    required: false,
+  },
+  bookId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "LibraryTable",
+    required: false,
+  },
+  assetId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Assets",
+    required: false,
   },
   transactionType: {
     type: String,
@@ -18,15 +28,13 @@ const transactionSchema = new mongoose.Schema<ITransaction>({
   },
   pricePerItem: {
     type: Number,
-    required: function () {
-      return (this.transactionType === "IN" || this.transactionType === "OUT") && this.transactionSource === "general stock"; // Require price for both incoming and outgoing transactions
-    },
+    required: false,
   },
   totalPrice: {
     type: Number,
     required: true,
     default: function () {
-      return this.quantity * this.pricePerItem; // Calculate total price based on quantity and price
+      return this.quantity * (this.pricePerItem || 0);
     },
   },
   date: {
@@ -41,26 +49,21 @@ const transactionSchema = new mongoose.Schema<ITransaction>({
   newQuantity: {
     type: Number,
     required: true,
-    default: function () {
-      return this.previousQuantity + this.quantity;
-    },
   },
   takenBy: {
     type: String,
-    required: function () {
-      return this.transactionType === "OUT"; // Required for OUT transactions
-    },
+    required: false,
   },
   itemPrices: [{
-    itemName: { type: String, required: function(){ return this.transactionSource === "full uniform" || this.transactionSource === 'partial uniform' || this.transactionSource === 'uniform stock'} },
-    price: { type: Number, required: function(){ return this.transactionSource === "full uniform" || this.transactionSource === 'partial uniform' || this.transactionSource === 'uniform stock'} },
-    quantity: { type: Number, required: function(){ return this.transactionSource === "full uniform" || this.transactionSource === 'partial uniform' || this.transactionSource === 'uniform stock'} },
+    itemName: { type: String },
+    price: { type: Number },
+    quantity: { type: Number },
   }],
   transactionSource: {
     type: String,
-    enum: ["uniform stock", "general stock", "full uniform", "partial uniform"], // Can define any other types of transactions
+    enum: ["uniform stock", "general stock", "full uniform", "partial uniform", "library borrowing", "asset assignment"],
     required: true,
   },
 });
 
-export const Transaction = mongoose.model("Transaction", transactionSchema);
+export const Transaction = mongoose.model<ITransaction>("Transaction", transactionSchema);

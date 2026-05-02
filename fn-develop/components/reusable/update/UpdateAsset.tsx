@@ -23,21 +23,33 @@ const UpdateAsset = ({ isOpen, setIsOpen, reFetch, categories, assetToUpdate }: 
         initialValues: {
             item: assetToUpdate?.item || "",
             purchaseDate: assetToUpdate?.purchaseDate || "",
-            category: assetToUpdate?.category || "",
+            category: assetToUpdate?.category?._id || assetToUpdate?.category || "",
             description: assetToUpdate?.description || "",
             location: assetToUpdate?.location || "",
             totalNumber: assetToUpdate?.totalNumber || 0,
             totalNumberInGoodCondition: assetToUpdate?.totalNumberInGoodCondition || 0,
             totalNumberInCriticalCondition: assetToUpdate?.totalNumberInCriticalCondition || 0,
             values: assetToUpdate?.values || 0,
+            image: null
         },
         enableReinitialize: true,
         validationSchema: newAssetFormikSchema,
         onSubmit: async (values) => {
             setIsLoading(true);
             try {
+                const formData = new FormData();
+                formData.append('id', assetToUpdate._id);
+                Object.keys(values).forEach(key => {
+                    const value = (values as any)[key];
+                    if (key === 'image' && value) {
+                        formData.append('image', value);
+                    } else if (value !== undefined && key !== 'id') {
+                        formData.append(key, value);
+                    }
+                });
+
                 updateAssetMutate(
-                    { ...values, id: assetToUpdate._id },
+                    formData,
                     {
                         onSuccess: (data) => {
                             toast.success("Asset updated successfully");
@@ -46,9 +58,9 @@ const UpdateAsset = ({ isOpen, setIsOpen, reFetch, categories, assetToUpdate }: 
                             updateAssetFormik.resetForm();
                             setIsLoading(false);
                         },
-                        onError: (error) => {
+                        onError: (error: any) => {
                             setIsLoading(false);
-                            toast.error(error.message);
+                            toast.error(error.response?.data?.message || error.message);
                         },
                     }
                 );
@@ -198,6 +210,18 @@ const UpdateAsset = ({ isOpen, setIsOpen, reFetch, categories, assetToUpdate }: 
                             {updateAssetFormik.touched.values && updateAssetFormik.errors.values && (
                                 <div className="text-red-500 text-[12px]">{String(updateAssetFormik.errors.values)}</div>
                             )}
+                        </div>
+                        <div className='flex flex-col gap-[4px] w-full col-span-2'>
+                            <span className='text-[12px] text-black'>Update Image (Optional)</span>
+                            <input
+                                name='image'
+                                onChange={(event) => {
+                                    updateAssetFormik.setFieldValue("image", event.currentTarget.files?.[0]);
+                                }}
+                                type="file"
+                                accept='image/*'
+                                className='border p-3 text-[12px] rounded-[12px]'
+                            />
                         </div>
                     </div>
                     <Button

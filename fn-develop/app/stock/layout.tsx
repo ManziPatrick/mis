@@ -3,6 +3,8 @@ import SuperAdminNavbar from "@/components/navbar/SuperAdminNavbar";
 import FinanceSidebar from "@/components/sidebar/FinanceSidebar";
 import StockSidebar from "@/components/sidebar/StockSidebar";
 import SuperAdminSidebar from "@/components/sidebar/SuperAdminSidebar";
+import AdminSidebar from "@/components/sidebar/AdminSidebar";
+import { HeadTeacherSidebar, DhtSidebar, LogisticsSidebar, MdSidebar, TeacherSidebar, WorkshopAssistantSidebar } from "@/components/sidebar/RoleSidebars";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
@@ -30,9 +32,16 @@ export default function RootLayout({
             setIsNotAuth(true)
             router.push("/");
         }
-        else if (status == "authenticated" && session.user.role == "stock") {
-            setIsLoading(false)
-            setIsAllowed(true)
+        else if (status == "authenticated") {
+            const allowedRoles = ["stock", "admin", "superadmin", "finance", "headteacher", "dht", "logistics", "md", "teacher", "workshopassistant"];
+            if (allowedRoles.includes(session.user.role)) {
+                setIsLoading(false)
+                setIsAllowed(true)
+            } else {
+                setIsNotAuth(true)
+                setIsAllowed(false)
+                router.push("/");
+            }
         } else {
             setIsNotAuth(true)
             setIsAllowed(false)
@@ -50,7 +59,16 @@ export default function RootLayout({
         return (
             <div className="w-full flex flex-row bg-gray-50">
                 <div className="w-[20%] fixed">
-                    <StockSidebar />
+                    {session?.user?.role === 'admin' && <AdminSidebar />}
+                    {session?.user?.role === 'superadmin' && <SuperAdminSidebar />}
+                    {session?.user?.role === 'finance' && <FinanceSidebar />}
+                    {session?.user?.role === 'headteacher' && <HeadTeacherSidebar />}
+                    {session?.user?.role === 'dht' && <DhtSidebar />}
+                    {session?.user?.role === 'logistics' && <LogisticsSidebar />}
+                    {session?.user?.role === 'md' && <MdSidebar />}
+                    {session?.user?.role === 'teacher' && <TeacherSidebar />}
+                    {session?.user?.role === 'workshopassistant' && <WorkshopAssistantSidebar />}
+                    {session?.user?.role === 'stock' && <StockSidebar />}
                 </div>
                 <div className="w-[80%] flex flex-col gap-[10px] ml-auto">
                     <AdminNavbar />

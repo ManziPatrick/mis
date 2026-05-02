@@ -47,6 +47,9 @@ const assetsSchema = new mongoose.Schema<IAssets>(
     criticalCondition: {
       type: String,
     },
+    imageUrl: {
+      type: String,
+    },
   },
   {
     timestamps: true,

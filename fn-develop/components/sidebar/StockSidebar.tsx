@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import Image from 'next/image'
-import { MdDashboardCustomize } from "react-icons/md";
+import { MdDashboardCustomize, MdAssignmentInd, MdOutlineArticle } from "react-icons/md";
 import { FaComputer, FaMoneyCheckDollar, FaUsers } from "react-icons/fa6";
 import { RiLogoutBoxFill } from 'react-icons/ri';
 import { MdOutlinePassword } from "react-icons/md";
@@ -50,6 +50,10 @@ const StockSidebar = () => {
                         <FaComputer size={20} />
                         <span className='text-[16px] font-[400]'>Assets</span>
                     </Link>
+                    <Link href='/stock/assignments' className={`${pathname == "/stock/assignments" ? "p-4 rounded-[12px] bg-white text-black" : "px-4 text-white"} flex flex-row items-center gap-[10px] `}>
+                        <MdAssignmentInd size={20} />
+                        <span className='text-[16px] font-[400]'>Assignments</span>
+                    </Link>
                     <Link href='/stock/stocks' className={`${pathname?.includes("/stock/stocks")  ? "p-4 rounded-[12px] bg-white text-black" : "px-4 text-white"} flex flex-row items-center gap-[10px] `}>
                         <FaMoneyCheckDollar size={20} />
                         <span className='text-[16px] font-[400]'>Stocks</span>
@@ -61,6 +65,10 @@ const StockSidebar = () => {
                     <Link href='/stock/transactions' className={`${pathname == "/stock/transactions"  ? "p-4 rounded-[12px] bg-white text-black" : "px-4 text-white"} flex flex-row items-center gap-[10px] `}>
                         <GrTransaction size={20} />
                         <span className='text-[16px] font-[400]'>Transactions</span>
+                    </Link>
+                    <Link href='/stock/forms' className={`${pathname?.includes("/stock/forms") ? "p-4 rounded-[12px] bg-white text-black" : "px-4 text-white"} flex flex-row items-center gap-[10px] `}>
+                        <MdOutlineArticle size={20} />
+                        <span className='text-[16px] font-[400]'>Forms</span>
                     </Link>
                 </div>
             </div>

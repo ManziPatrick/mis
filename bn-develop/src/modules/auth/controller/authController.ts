@@ -27,6 +27,14 @@ const login = async (req: Request, res: Response): Promise<void> => {
         }
 
         const token = await generateToken(user._id.toString());
+
+        // Create or update session in database
+        await SessionModel.findOneAndUpdate(
+            { userId: user._id },
+            { userId: user._id },
+            { upsert: true, new: true }
+        );
+
         const userData = {
             firstName: user.firstName,
             lastName: user.lastName,
@@ -285,6 +293,19 @@ export const resendOTP = async (req: Request, res: Response): Promise<void> => {
       console.log(error);
       res.status(500).json({ message: 'Internal server error' });
   }
+};
+
+export const logout = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user?._id;
+        if (userId) {
+            await SessionModel.deleteOne({ userId });
+        }
+        res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
 };
 
 export default { login };

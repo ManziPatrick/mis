@@ -30,13 +30,24 @@ const NewAsset = ({ isOpen, setIsOpen, reFetch, categories}: NewAssestType) => {
             totalNumberInGoodCondition: 0,
             totalNumberInCriticalCondition: 0,
             values: 0,
-            criticalCondition: ""
+            criticalCondition: "",
+            image: null
         },
         validationSchema: newAssetFormikSchema,
         onSubmit: async (values) => {
             setIsLoading(true);
             try {
-                createAssetMutate(values, {
+                const formData = new FormData();
+                Object.keys(values).forEach(key => {
+                    const value = (values as any)[key];
+                    if (key === 'image' && value) {
+                        formData.append('image', value);
+                    } else if (value !== undefined) {
+                        formData.append(key, value);
+                    }
+                });
+
+                createAssetMutate(formData, {
                     onSuccess: (data) => {
                         toast.success("New asset created successfully");
                         reFetch();
@@ -48,7 +59,6 @@ const NewAsset = ({ isOpen, setIsOpen, reFetch, categories}: NewAssestType) => {
                         setIsLoading(false);
                         const axError:any = error as AxiosError
                         toast.error(axError.response?.data.message || "Something went wrong");
-                        
                     },
                 });
             } catch (error:any) {
@@ -211,6 +221,18 @@ const NewAsset = ({ isOpen, setIsOpen, reFetch, categories}: NewAssestType) => {
                             {newAssetFormik.touched.values && newAssetFormik.errors.values && (
                                 <div className="text-red-500 text-[12px]">{newAssetFormik.errors.values}</div>
                             )}
+                        </div>
+                        <div className='flex flex-col gap-[4px] w-full col-span-2'>
+                            <span className='text-[12px] text-black'>Asset Image</span>
+                            <input
+                                name='image'
+                                onChange={(event) => {
+                                    newAssetFormik.setFieldValue("image", event.currentTarget.files?.[0]);
+                                }}
+                                type="file"
+                                accept='image/*'
+                                className='border p-3 text-[12px] rounded-[12px]'
+                            />
                         </div>
                     </div>
                     <Button

@@ -87,7 +87,7 @@ export const lowStockReport = async (req: Request, res: Response) => {
                                       .populate('category supplierId');
     
     if (lowStockItems.length === 0) {
-        res.status(404).json({ message: "No items below the minimum threshold." });
+        res.status(200).json([]);
       return ;
     }
 
@@ -115,7 +115,7 @@ export const stockMovementReport = async (req: Request, res: Response) => {
     }).populate('stockId');
 
     if (transactions.length === 0) {
-        res.status(404).json({ message: "No transactions found within the given range." });
+        res.status(200).json([]);
         return ;
     }
 

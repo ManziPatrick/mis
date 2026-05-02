@@ -32,7 +32,7 @@ const SuperAdminSidebar = () => {
     };
 
     const ApproveLogout = async () => {
-        Logout()
+        await Logout()
     }
     return (
         <div className='flex flex-col gap-[20px] bg-[#2E3487] w-full min-h-[100vh] justify-between pb-4'>

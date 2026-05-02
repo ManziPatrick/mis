@@ -24,6 +24,21 @@ const Employeee = () => {
   const { data: employees, isLoading, isError, error, refetch } = useGetAllEmployees();
   const { mutate: createEmployeee, isPending } = useCreateEmployeeMutation()
   const { mutate: deletEmployee, isPending: deleting } = useDeleteEmployee()
+  const [search, setSearch] = useState<string>("")
+
+  const filteredEmployees = React.useMemo(() => {
+    if (!employees) return [];
+    let data = [...employees].sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    if (search) {
+      data = data.filter((emp: any) => 
+        emp.name?.toLowerCase().includes(search.toLowerCase()) ||
+        emp.phone?.toLowerCase().includes(search.toLowerCase()) ||
+        emp.nationality?.toLowerCase().includes(search.toLowerCase()) ||
+        emp.email?.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    return data;
+  }, [employees, search]);
 
   const dateTemplate = (rowData: any) => {
     return (
@@ -108,7 +123,7 @@ const Employeee = () => {
         <div className="flex flex-col gap-[10px]  items-center justify-center bg-white rounded-[6px] py-4">
           <div className="pb-4 border-b px-20 w-full flex items-center justify-center">
             <span className="text-[22px] font-[600] text-center">
-              {employees?.length || 0}
+              {filteredEmployees?.length || 0}
             </span>
           </div>
           <div className="px-20 w-full flex items-center justify-center">
@@ -122,7 +137,7 @@ const Employeee = () => {
         <div className="flex flex-row gap-[10px]">
           <span className="text-[18px] font-[400]">Employees</span>
           <div className="p-1 px-2 rounded-[4px] bg-gray-50">
-            <span className="font-[500]">{employees?.length || 0}</span>
+            <span className="font-[500]">{filteredEmployees?.length || 0}</span>
           </div>
         </div>
         <div className="flex flex-row items-center gap-[10px]">
@@ -130,6 +145,8 @@ const Employeee = () => {
             <BiSearch />
             <input
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search something"
               className="outline-none"
             />
@@ -170,7 +187,7 @@ const Employeee = () => {
                 rowsPerPageOptions={[10, 20, 40]}
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} employees"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-                value={employees.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())}
+                value={filteredEmployees}
                 className="w-full mt-4"
               >
                 <Column

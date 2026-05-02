@@ -16,6 +16,7 @@ import * as Yup from "yup"
 import NewAsset from '@/components/reusable/NewAssets'
 import { confirmDialog } from 'primereact/confirmdialog'
 import UpdateAsset from '@/components/reusable/update/UpdateAsset'
+import AssignAsset from '@/components/reusable/AssignAsset'
 import FilterModal from '@/components/reusable/FilterModal'
 
 const Assets = () => {
@@ -23,6 +24,7 @@ const Assets = () => {
     const [isNewAsset, setIsNewAsset] = useState<boolean>(false)
     const [isUpdateAsset, setIsUpdateAsset] = useState<boolean>(false)
     const [assetToUpdate, setAssetToUpdate] = useState<any>(null)
+    const [isAssignOpen, setIsAssignOpen] = useState<boolean>(false)
     const { data: assets, isLoading, isError, error, refetch } = useGetAllAssets()
     console.log(assets)
     const { data: categories, isLoading: categoryLoading, isError: categoryIsError, error: categoryError, refetch: categoryFetch } = useGetAllStockCategory()
@@ -60,6 +62,14 @@ const Assets = () => {
         }
     })
 
+    const imageTemplate = (rowData: any) => {
+        return rowData.imageUrl ? (
+            <img src={rowData.imageUrl} alt={rowData.item} className='w-12 h-12 object-cover rounded-[4px]' />
+        ) : (
+            <div className='w-12 h-12 bg-gray-200 rounded-[4px] flex items-center justify-center text-[10px] text-gray-500'>No Image</div>
+        );
+    }
+
     const totalVlaueTempelate = (rowData: any) => {
         return (
             <div className='flex flex-row gap-[5px] items-center'>
@@ -75,10 +85,13 @@ const Assets = () => {
                     setAssetToUpdate(rowData)
                     setIsUpdateAsset(true)
                 }} className=' cursor-pointer px-2 border p-2 rounded-[4px] hover:bg-gray-100'><FaRegPenToSquare size={20} /></span>
+                <span onClick={() => {
+                    setAssetToUpdate(rowData)
+                    setIsAssignOpen(true)
+                }} title="Assign" className=' cursor-pointer px-2 border p-2 text-blue-500 rounded-[4px] hover:bg-blue-100'><FaUserPlus size={20} /></span>
                 <span onClick={() => confirmDelete(rowData._id)} className='  cursor-pointer px-2 border p-2 text-red-500 rounded-[4px] hover:bg-red-200'>
                     {isDeletingAsset && deleteingId == rowData._id ? <span className='text-[12px]'>Loading...</span> : <CiTrash size={20} />}
                 </span>
-
             </div>
 
 
@@ -195,6 +208,7 @@ const Assets = () => {
                         ) : (
                             <DataTable value={filteredAssets} className='w-full mt-4'>
                                 <Column body={(rowData, options) => (options.rowIndex + 1).toString().padStart(3, '0')} field="code" header="Code" headerClassName='h-[8vh] bg-[#2E3487] text-white px-2  text-[14px] font-[400]' bodyClassName={"h-[8vh] p-2 text-[13px] border-b"}></Column>
+                                <Column body={imageTemplate} header="Image" headerClassName='h-[8vh] bg-[#2E3487] text-white px-2 text-[14px] font-[400]' bodyClassName={"h-[8vh] p-2 text-[13px] border-b"}></Column>
                                 <Column field='item' header="Item Name" headerClassName='h-[8vh] bg-[#2E3487] text-white px-2 text-[14px] font-[400]' bodyClassName={"h-[8vh] p-2 text-[13px] border-b"}></Column>
                                 <Column field='category.name' header="Category" headerClassName='h-[8vh] bg-[#2E3487] text-white px-2 text-[12px] font-[400]' bodyClassName={"h-[8vh] p-2 text-[12px] border-b"}></Column>
                                 <Column field="totalNumber" header="Total Number" headerClassName='h-[8vh] bg-[#2E3487] text-white  text-[14px] px-2 font-[400]' bodyClassName={"h-[8vh] p-2 text-[13px] border-b"}></Column>
@@ -247,6 +261,7 @@ const Assets = () => {
             </Dialog>
             <NewAsset isOpen={isNewAsset} setIsOpen={setIsNewAsset} categories={categories} reFetch={refetch} />
             <UpdateAsset assetToUpdate={assetToUpdate} isOpen={isUpdateAsset} setIsOpen={setIsUpdateAsset} categories={categories} reFetch={refetch} />
+            <AssignAsset isOpen={isAssignOpen} setIsOpen={setIsAssignOpen} assetData={assetToUpdate} reFetch={refetch} />
             <FilterModal visible={isFilterModal} onHide={() => setIsFilterModal(false)} categories={categories!} filterData={filterData} setFilterData={setFilterData} />
 
 

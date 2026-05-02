@@ -28,7 +28,10 @@ import {
   getAllSuppliesController,
   getSupplyBySupplierIdController,
   getUnpaidSuppliesBySupplierIdController,
-  createFacultyController
+  createFacultyController,
+  assignAssetController,
+  returnAssetController,
+  getAssetAssignmentsController
 } from "../modules/stock/controller/stockController";
 import { userAuthorization } from "../middlewares/auth";
 import {
@@ -44,6 +47,7 @@ const stockRoutes = Router();
 stockRoutes.post(
   "/assets",
   userAuthorization(["stock"]),
+  upload.single("image"),
   assetsValidation,
   createAssetsController
 );
@@ -118,6 +122,7 @@ stockRoutes.put(
   "/assets/:id",
   userAuthorization(["stock"]),
   isAssetsExist,
+  upload.single("image"),
   updateAssetsController
 );
 stockRoutes.delete(
@@ -160,4 +165,9 @@ stockRoutes.get(
 stockRoutes.put('/update-uniform-stock/:id', userAuthorization(["stock"]),updateUniformsController)
 stockRoutes.put('/update-uniform-items/:id', userAuthorization(["stock"]),
 updateUniformsItemsController)
+
+stockRoutes.post('/assets/:id/assign', userAuthorization(["stock"]), assignAssetController);
+stockRoutes.post('/asset-assignments/:id/return', userAuthorization(["stock"]), returnAssetController);
+stockRoutes.get('/asset-assignments', userAuthorization(["stock", "admin"]), getAssetAssignmentsController);
+
 export default stockRoutes;

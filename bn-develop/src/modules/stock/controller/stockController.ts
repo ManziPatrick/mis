@@ -40,6 +40,8 @@ import { uploadFile } from "../../../utils";
 import { IRequestUser, IStock } from "../../../utils/types";
 import { Stock } from "../../../database/model/stock";
 import { Uniform } from "../../../database/model/uniformStock";
+import { AssetAssignment } from "../../../database/model/assetAssignment";
+
 import {
   getUniformPayment,
   getUniformPaymentById,
@@ -127,6 +129,12 @@ export const createAssetsController = async (req: Request, res: Response) => {
       values,
       criticalCondition,
     } = req.body;
+
+    let imageUrl: string | undefined;
+    if (req.file) {
+      const uploaded = await uploadFile(req.file);
+      imageUrl = uploaded.file.url;
+    }
     // check if the category exist
     const categoryExist = await getCategoryById(category as string);
     if (!categoryExist) {
@@ -191,8 +199,9 @@ export const createAssetsController = async (req: Request, res: Response) => {
       totalNumberInCriticalCondition,
       values,
       totalValues,
-      criticalCondition
-    });
+      criticalCondition,
+      imageUrl
+    } as any);
     res.status(201).json({
       message: "Assets created successfully",
       assets,
@@ -229,7 +238,12 @@ export const getAssetsByIdController = async (req: Request, res: Response) => {
 export const updateAssetsController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const assets = await updateAssets(id as string, req.body);
+    const updateData = { ...req.body };
+    if (req.file) {
+      const uploaded = await uploadFile(req.file);
+      updateData.imageUrl = uploaded.file.url;
+    }
+    const assets = await updateAssets(id as string, updateData);
     res.status(200).json(assets);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -1136,3 +1150,114 @@ export const getUnpaidSuppliesBySupplierIdController = async (
     res.status(500).json({ error: error.message });
   }
 };
+export const getAssetAssignmentsController = async (req: Request, res: Response) => {
+    try {
+        const assignments = await AssetAssignment.find().populate('assetId');
+        res.status(200).json(assignments);
+    } catch (error: any) {
+        console.error("Error in getAssetAssignmentsController:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+export const assignAssetController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params; // assetId
+        const { studentId, conditionOnAssignment } = req.body;
+
+        const asset = await getAssetsById(id as string);
+        if (!asset) {
+            res.status(404).json({ message: "Asset not found" });
+            return;
+        }
+
+        if (asset.totalNumberInGoodCondition <= 0) {
+            res.status(400).json({ message: "No assets in good condition available" });
+            return;
+        }
+
+        const assignment = await AssetAssignment.create({
+            assetId: id,
+            studentId,
+            assignedDate: new Date(),
+            status: 'assigned',
+            conditionOnAssignment
+        });
+
+        // Update asset quantity
+        asset.totalNumberInGoodCondition -= 1;
+        asset.totalNumber -= 1; // It's "removed" from general stock as requested
+        await asset.save();
+
+        // Log transaction
+        const transaction = new Transaction({
+            assetId: id,
+            transactionType: "OUT",
+            quantity: 1,
+            previousQuantity: asset.totalNumber + 1,
+            newQuantity: asset.totalNumber,
+            takenBy: studentId,
+            transactionSource: "asset assignment",
+        });
+        await transaction.save();
+
+        res.status(201).json({ message: "Asset assigned successfully", assignment, transaction });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+export const returnAssetController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params; // assignmentId
+        const { conditionOnReturn } = req.body;
+
+        const assignment = await AssetAssignment.findById(id);
+        if (!assignment) {
+            res.status(404).json({ message: "Assignment record not found" });
+            return;
+        }
+
+        if (assignment.status === 'returned') {
+            res.status(400).json({ message: "Asset already returned" });
+            return;
+        }
+
+        const asset = await getAssetsById(assignment.assetId.toString());
+        if (!asset) {
+            res.status(404).json({ message: "Asset not found" });
+            return;
+        }
+
+        assignment.status = 'returned';
+        assignment.returnDate = new Date();
+        assignment.conditionOnReturn = conditionOnReturn;
+        await assignment.save();
+
+        // Update asset quantity
+        asset.totalNumber += 1;
+        if (conditionOnReturn === 'Good') {
+            asset.totalNumberInGoodCondition += 1;
+        } else {
+            asset.totalNumberInCriticalCondition += 1;
+        }
+        await asset.save();
+
+        // Log transaction
+        const transaction = new Transaction({
+            assetId: asset._id,
+            transactionType: "IN",
+            quantity: 1,
+            previousQuantity: asset.totalNumber - 1,
+            newQuantity: asset.totalNumber,
+            takenBy: assignment.studentId,
+            transactionSource: "asset assignment",
+        });
+        await transaction.save();
+
+        res.status(200).json({ message: "Asset returned successfully", assignment, transaction });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+};
+

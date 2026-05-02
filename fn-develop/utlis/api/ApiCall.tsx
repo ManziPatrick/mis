@@ -21,6 +21,11 @@ API.interceptors.request.use(
 
     if (session && session.user.token) {
       config.headers.Authorization = `Bearer ${session.user.token}`;
+    } else {
+      // If no token is found and it's not an auth route, we might want to log it
+      if (!config.url?.includes('/auth/')) {
+        console.warn(`No token found for request to: ${config.url}`);
+      }
     }
 
     return config;

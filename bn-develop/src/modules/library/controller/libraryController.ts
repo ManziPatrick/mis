@@ -333,8 +333,113 @@ export const deleteBookController = async (req: Request, res: Response) => {
         }
         await deleteBook(req.params.id as string)
         res.status(200).json({ message: 'Book deleted successfully' });
-    } catch (error:any) {
+    } catch (error: any) {
         console.log(error);
-        res.status(500).json({ message: "Internal server error" ,error: error.message });
-      }
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
 };
+
+export const getBorrowingsController = async (req: Request, res: Response) => {
+    try {
+        const borrowings = await getBorrowings();
+        res.status(200).json(borrowings);
+    } catch (error: any) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+export const borrowBookController = async (req: ExtendedRequest, res: Response) => {
+    try {
+        const { id } = req.params; // bookId
+        const { studentId, dueDate } = req.body;
+
+        const book = await getBookById(id as string);
+        if (!book) {
+            res.status(404).json({ message: 'Book not found' });
+            return;
+        }
+
+        if (book.quantity <= 0) {
+            res.status(400).json({ message: 'Book is out of stock' });
+            return;
+        }
+
+        const borrowing = await Borrowing.create({
+            bookId: id,
+            studentId,
+            borrowDate: new Date(),
+            dueDate: new Date(dueDate),
+            status: 'borrowed'
+        });
+
+        // Update book quantity
+        book.quantity -= 1;
+        await book.save();
+
+        // Log transaction
+        const transaction = new Transaction({
+            bookId: id,
+            transactionType: "OUT",
+            quantity: 1,
+            previousQuantity: book.quantity + 1,
+            newQuantity: book.quantity,
+            takenBy: studentId,
+            transactionSource: "library borrowing",
+        });
+        await transaction.save();
+
+        res.status(201).json({ message: 'Book borrowed successfully', borrowing, transaction });
+    } catch (error: any) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+export const returnBookController = async (req: ExtendedRequest, res: Response) => {
+    try {
+        const { id } = req.params; // borrowingId
+        const borrowing = await Borrowing.findById(id as string);
+        if (!borrowing) {
+            res.status(404).json({ message: 'Borrowing record not found' });
+            return;
+        }
+
+        if (borrowing.status === 'returned') {
+            res.status(400).json({ message: 'Book already returned' });
+            return;
+        }
+
+        const book = await getBookById(borrowing.bookId.toString());
+        if (!book) {
+            res.status(404).json({ message: 'Book not found' });
+            return;
+        }
+
+        borrowing.status = 'returned';
+        borrowing.returnDate = new Date();
+        await borrowing.save();
+
+        // Update book quantity
+        book.quantity += 1;
+        await book.save();
+
+        // Log transaction
+        const transaction = new Transaction({
+            bookId: book._id,
+            transactionType: "IN",
+            quantity: 1,
+            previousQuantity: book.quantity - 1,
+            newQuantity: book.quantity,
+            takenBy: borrowing.studentId,
+            transactionSource: "library borrowing",
+        });
+        await transaction.save();
+
+        res.status(200).json({ message: 'Book returned successfully', borrowing, transaction });
+    } catch (error: any) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+import { Borrowing } from '../../../database/model/borrowing';
+import { Transaction } from '../../../database/model/transaction';
+import { getBorrowings } from '../repository/libraryRepository';

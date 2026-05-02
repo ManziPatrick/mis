@@ -55,3 +55,16 @@ export const uploadFile = async (file: Express.Multer.File) => {
     throw new Error('Failed to upload file to Cloudinary: ' + error.message);
   }
 };
+
+export const uploadBase64 = async (base64: string, folder = 'mis/signatures') => {
+  try {
+    const result = await cloudinary.v2.uploader.upload(base64, {
+      folder,
+      resource_type: 'auto',
+    });
+    return result.secure_url;
+  } catch (error: any) {
+    console.error('Cloudinary base64 upload error:', error);
+    throw new Error('Failed to upload base64 to Cloudinary: ' + error.message);
+  }
+};

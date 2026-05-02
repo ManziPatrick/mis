@@ -19,7 +19,7 @@ export const getNotificationsByUserIdController = async (req: ExtendedRequest, r
     try {
         const notifications = await getNotificationsByUserId(req.user.id);
         if (!notifications || notifications.length === 0) {
-            res.status(404).json({ message: 'No notifications found' });
+            res.status(200).json([]);
             return;
         }
         res.status(200).json(notifications);
@@ -61,7 +61,7 @@ const updateAllNotificationsStatusController = async (req: ExtendedRequest, res:
     try {
         const updatedNotifications = await updateAllNotificationsStatus(req.user.id);
         if (!updatedNotifications || updatedNotifications.modifiedCount === 0) {
-            res.status(404).json({ message: 'No notifications found' });
+            res.status(200).json({message: "No notifications to update"});
             return;
         }
         res.status(200).json({message: "All notifications updated successfully"});

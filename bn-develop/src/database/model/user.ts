@@ -48,6 +48,12 @@ const userSchema = new mongoose.Schema({
   profilePicture: {
     type: String,
   },
+  signatureUrl: {
+    type: String,
+  },
+  stampUrl: {
+    type: String,
+  },
 }, { timestamps: true });
 
 export const User = mongoose.model('User', userSchema);

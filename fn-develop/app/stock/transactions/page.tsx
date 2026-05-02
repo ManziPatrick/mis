@@ -15,6 +15,19 @@ const Transaction = () => {
     const { data: transactions, isLoading, isError, error } = useGetAllTransaction()
     const [visibleRight, setVisibleRight] = useState<boolean>(false)
     const [transactionDetails, setTransactionDetails] = useState<any>(null)
+    const [search, setSearch] = useState<string>("")
+
+    const filteredTransactions = React.useMemo(() => {
+        if (!transactions) return [];
+        if (search) {
+            return transactions.filter((t: any) => 
+                t.stockId?.item?.toLowerCase().includes(search.toLowerCase()) ||
+                t.transactionSource?.toLowerCase().includes(search.toLowerCase()) ||
+                (t.itemPrices?.some((p: any) => p.itemName?.toLowerCase().includes(search.toLowerCase())))
+            );
+        }
+        return transactions;
+    }, [transactions, search]);
 
     const actionTempelate = (rowData: any) => {
         return (
@@ -58,7 +71,7 @@ const Transaction = () => {
 
                     <div className='flex flex-row gap-[4px] items-center'>
                         <h1 className='text-[16px] font-[600]'>Transactions</h1>
-                        <span className='p-2 bg-gray-100 rounded-[4px]'>{!isLoading && transactions?.length}</span>
+                        <span className='p-2 bg-gray-100 rounded-[4px]'>{!isLoading && filteredTransactions?.length}</span>
                     </div>
                     <div className='flex flex-row gap-[10px] items-center'></div>
                 </div>
@@ -69,7 +82,7 @@ const Transaction = () => {
                     </div>
                     <div className='flex flex-row items-center gap-[3px] p-2 border rounded-[6px]'>
                         <CiSearch size={18} />
-                        <input type="text" className='text-[13px] rounded-[6px] outline-none' placeholder='Search' />
+                        <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" className='text-[13px] rounded-[6px] outline-none' placeholder='Search' />
                     </div>
                 </div>
             </div>
@@ -79,7 +92,7 @@ const Transaction = () => {
                         <OrbitProgress color="#2E3487" size="small" text="" textColor="" />
                     </div>
                 ) : (<>
-                    {transactions?.length === 0 ? (
+                    {filteredTransactions?.length === 0 ? (
                         <div className='w-full flex items-center text-center justify-center p-10 flex-col gap-[3px]'>
                             <GiEmptyWoodBucket size={60} color='lightgray' />
                             <span className='text-[16px] font-[700]'>No Transaction Avaliable</span>
@@ -95,7 +108,7 @@ const Transaction = () => {
                             rowsPerPageOptions={[10, 20, 40]}
                             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} employees"
                             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-                            value={transactions} className='w-full mt-4'>
+                            value={filteredTransactions} className='w-full mt-4'>
                             <Column body={(rowData, options) => (options.rowIndex + 1).toString().padStart(3, '0')} field="code" header="#" headerClassName='h-[8vh] bg-[#2E3487] text-white px-2  text-[12px] font-[400]' bodyClassName={"h-[8vh] p-2 text-[13px] border-b"}></Column>
                             <Column field='' header="Date" body={dateTemplate} headerClassName='h-[8vh] bg-[#2E3487] text-white px-2 text-[12px] font-[400]' bodyClassName={"h-[8vh] p-2 text-[12px] border-b"}></Column>
                             <Column field='stockId.item' header="Item Name" body={itemNameTemplate} headerClassName='h-[8vh] bg-[#2E3487] text-white px-2 text-[12px] font-[400]' bodyClassName={"h-[8vh] p-2 text-[12px] border-b"}></Column>

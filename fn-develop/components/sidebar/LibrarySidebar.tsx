@@ -12,6 +12,7 @@ import Link from "next/link"
 import Logout from '@/utlis/action/Logout';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { IoBookSharp } from 'react-icons/io5';
+import { LuArrowLeftRight } from "react-icons/lu";
 
 
 const LibrarySidebar = () => {
@@ -50,6 +51,10 @@ const LibrarySidebar = () => {
                     <Link href='/library/books' className={`${pathname == "/library/books" ? "p-4 rounded-[12px] bg-white text-black" : " text-white px-4"} flex flex-row items-center gap-[10px] `}>
                         <IoBookSharp size={18} />
                         <span className='text-[14px] font-[400]'>Books</span>
+                    </Link>
+                    <Link href='/library/borrowings' className={`${pathname == "/library/borrowings" ? "p-4 rounded-[12px] bg-white text-black" : " text-white px-4"} flex flex-row items-center gap-[10px] `}>
+                        <LuArrowLeftRight size={18} />
+                        <span className='text-[14px] font-[400]'>Rent/Returns</span>
                     </Link>
                 </div>
             </div>

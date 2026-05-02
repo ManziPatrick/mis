@@ -105,3 +105,39 @@ export const useApproveBookRequest = () => {
     },
   });
 }
+
+export const useGetAllBorrowings = () => {
+  return useQuery({
+    queryKey: ["borrowings"],
+    queryFn: async () => {
+      const response = await API.get("/library/borrowings");
+      return response.data;
+    },
+  });
+};
+
+interface BorrowType {
+  studentId: string;
+  dueDate: string;
+  bookId: string;
+}
+
+export const useBorrowBook = () => {
+  return useMutation({
+    mutationKey: ["borrow-book"],
+    mutationFn: async (data: BorrowType) => {
+      const response = await API.post(`/library/books/${data.bookId}/borrow`, data);
+      return response.data;
+    },
+  });
+};
+
+export const useReturnBook = () => {
+  return useMutation({
+    mutationKey: ["return-book"],
+    mutationFn: async (borrowingId: string) => {
+      const response = await API.post(`/library/borrowings/${borrowingId}/return`);
+      return response.data;
+    },
+  });
+};

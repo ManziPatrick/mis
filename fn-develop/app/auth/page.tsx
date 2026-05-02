@@ -125,7 +125,7 @@ const LoginContent = () => {
                         localStorage.removeItem('currentUserId')
                         joinRoom()
 
-                        if (["superadmin", "admin", "finance", "stock", "procurement", "hr"].includes(session.user.role)) {
+                        if (["superadmin", "admin", "finance", "stock", "procurement", "hr", "headteacher", "dht", "logistics", "md", "teacher", "workshopassistant"].includes(session.user.role)) {
                             localStorage.removeItem('currentUserId')
                             navigate.push(session.user.role)
                         } else if (session.user.role === "librarian") {

@@ -1,5 +1,6 @@
 "use client"
 import NewBook from '@/components/reusable/NewBook'
+import BorrowBook from '@/components/reusable/BorrowBook'
 import UpdateBook from '@/components/reusable/update/UpdateBook'
 import { useDeleteBook, useGetAllBookDeleteRequest, useGetAllBooks, useSendDeleteBookRequest } from '@/utlis/hooks/library.hook'
 import { AxiosError } from 'axios'
@@ -10,8 +11,10 @@ import { DataTable } from 'primereact/datatable'
 import { Dialog } from 'primereact/dialog'
 import React, { useEffect, useState, useMemo } from 'react'
 import { FaRegPenToSquare } from 'react-icons/fa6'
+import { MdOutlineLibraryAdd } from 'react-icons/md'
 import { GiEmptyWoodBucket } from 'react-icons/gi'
 import { GoEye } from 'react-icons/go'
+import { CiSearch } from 'react-icons/ci'
 import { OrbitProgress } from 'react-loading-indicators'
 import { toast } from 'sonner'
 import * as Yup from "yup"
@@ -27,12 +30,22 @@ const Books = () => {
     const [viewedData, setViewedData] = useState<any>({})
     const [errorr, setError] = useState<any>()
     const [isSendRequest, setIsSendRequest] = useState<boolean>(false)
+    const [isBorrowOpen, setIsBorrowOpen] = useState<boolean>(false)
+    const [search, setSearch] = useState<string>("")
 
 
-    const reversedBooks = useMemo(() => {
+    const filteredBooks = useMemo(() => {
         if (!booksData) return [];
-        return [...booksData].reverse();
-    }, [booksData]);
+        let data = [...booksData].reverse();
+        if (search) {
+            data = data.filter((book: any) => 
+                book.book_name.toLowerCase().includes(search.toLowerCase()) ||
+                book.author.toLowerCase().includes(search.toLowerCase()) ||
+                book.isbn.toLowerCase().includes(search.toLowerCase())
+            );
+        }
+        return data;
+    }, [booksData, search]);
 
     useEffect(() => {
         if (isError && error) {
@@ -45,6 +58,7 @@ const Books = () => {
             <div className="flex flex-row gap-[20px] items-center">
                 <div onClick={() => { setViewedData(rowData); setIsView(true) }} className="text-green-700 cursor-pointer"><GoEye size={20} /></div>
                 <div onClick={() => openUpdate(rowData)} className="text-orange-700 cursor-pointer"><FaRegPenToSquare size={16} /></div>
+                <div onClick={() => { setViewedData(rowData); setIsBorrowOpen(true) }} title="Borrow" className="text-blue-700 cursor-pointer"><MdOutlineLibraryAdd size={20} /></div>
             </div>
         )
     }
@@ -115,6 +129,20 @@ const Books = () => {
                     + New Book
                 </Button>
             </div>
+
+            <div className='flex flex-row items-center justify-between bg-white p-4 rounded-[6px]'>
+                <h1 className='text-[16px] font-[600]'>All Books ({filteredBooks.length})</h1>
+                <div className='flex flex-row items-center gap-[3px] p-2 border rounded-[6px] w-[300px]'>
+                    <CiSearch size={18} />
+                    <input 
+                        value={search} 
+                        onChange={(e) => setSearch(e.target.value)} 
+                        type="search" 
+                        className='text-[13px] rounded-[6px] outline-none w-full' 
+                        placeholder='Search by name / author / ISBN' 
+                    />
+                </div>
+            </div>
             {isLoading ? (
                 <div className='w-full p-20 flex items-center justify-center'>
                     <div className='w-full p-10 flex items-center justify-center'>
@@ -123,7 +151,7 @@ const Books = () => {
                 </div>
             ) : (
                 <>
-                    {isError || !reversedBooks.length ? (
+                    {isError || !filteredBooks.length ? (
                         <div className='w-full py-10 bg-white flex items-center text-center justify-center p-2 flex-col gap-[3px]'>
                             <GiEmptyWoodBucket size={60} color='lightgray' />
                             <span className='text-[16px] font-[700]'>No books found</span>
@@ -142,12 +170,12 @@ const Books = () => {
                             rowsPerPageOptions={[10, 20, 40]}
                             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} books"
                             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-                            value={reversedBooks}
+                            value={filteredBooks}
                             className='w-full mt-4'
                         >
                             <Column
                                 body={(rowData, options) => {
-                                    const totalRecords = reversedBooks.length;
+                                    const totalRecords = filteredBooks.length;
                                     const reverseIndex = totalRecords - options.rowIndex;
                                     return reverseIndex.toString().padStart(3, "0");
                                 }}
@@ -169,6 +197,7 @@ const Books = () => {
 
             <NewBook isOpen={isNewOpen} setIsOpen={setIsNewOpen} reFetch={refetch} />
             <UpdateBook isOpen={isUpdateOpen} setIsOpen={setIsUpdateOpen} reFetch={refetch} updateData={viewedData} />
+            <BorrowBook isOpen={isBorrowOpen} setIsOpen={setIsBorrowOpen} bookData={viewedData} reFetch={refetch} />
             <Dialog visible={isView} className='w-1/2' header="Book Info" onHide={() => { setIsView(false); setIsSendRequest(false); setViewedData(null) }}>
                 <div className='flex flex-col gap-[10px] w-full'>
                     <div className=' w-full grid grid-cols-3 gap-[20px]'>

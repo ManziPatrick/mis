@@ -1,7 +1,8 @@
 // src/routes/authRoutes.ts
 import express, { Router, Response } from 'express';
-import authController, { forgetPassword, resendPasswordResetEmail, resetPassword, verifyOTP, resendOTP } from '../modules/auth/controller/authController';
+import authController, { forgetPassword, resendPasswordResetEmail, resetPassword, verifyOTP, resendOTP, logout } from '../modules/auth/controller/authController';
 import { passwordResetLimiter } from '../middlewares';
+import { userAuthorization } from '../middlewares/auth';
 
 const router: Router = Router();
 
@@ -11,4 +12,5 @@ router.post('/resend-reset-link', passwordResetLimiter, resendPasswordResetEmail
 router.post('/reset-password/:token', resetPassword);
 router.post('/verify-otp', verifyOTP);
 router.post('/resend-otp', resendOTP);
+router.post('/logout', userAuthorization(['superadmin', 'admin', 'finance', 'stock', 'procurement', 'hr', 'librarian']), logout);
 export default router;

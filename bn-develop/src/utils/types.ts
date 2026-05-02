@@ -25,6 +25,7 @@ export interface IAssets {
   values: number;
   totalValues: number;
   criticalCondition: string;
+  imageUrl?: string;
 }
 
 export interface IStock {
@@ -64,13 +65,15 @@ export interface IOutOfStock {
   item: string;
 }
 export interface ITransaction {
-  stockId: IStock;
+  stockId?: mongoose.Schema.Types.ObjectId | any;
+  bookId?: mongoose.Schema.Types.ObjectId | any;
+  assetId?: mongoose.Schema.Types.ObjectId | any;
   transactionType: "IN" | "OUT";
   quantity: number;
   date: Date;
   previousQuantity: number;
   totalPrice: number;
-  transactionSource: "uniform stock"| "general stock"| "full uniform"| "partial uniform";
+  transactionSource: "uniform stock"| "general stock"| "full uniform"| "partial uniform" | "asset assignment" | "library borrowing";
   pricePerItem:number, // Can define any other types of transactions
   newQuantity: number;
   takenBy: string;
@@ -159,4 +162,225 @@ export interface IPaperBlade extends Document {
   studentId:string;
   quantityBrought:number;
   dateBrought:Date;
+}
+
+export interface IBorrowing extends Document {
+  bookId: mongoose.Schema.Types.ObjectId;
+  studentId: string;
+  borrowDate: Date;
+  dueDate: Date;
+  returnDate?: Date;
+  status: "borrowed" | "returned";
+}
+
+export interface IAssetAssignment extends Document {
+  assetId: mongoose.Schema.Types.ObjectId;
+  studentId: string;
+  assignedDate: Date;
+  returnDate?: Date;
+  status: "assigned" | "returned";
+  conditionOnAssignment: string;
+  conditionOnReturn?: string;
+}
+
+export interface ISchoolSettings extends Document {
+  schoolName: string;
+  address: string;
+  logoUrl?: string;
+  tradePrefix?: string;
+}
+
+export interface IPurchaseOrderItem {
+  item: string;
+  specifications: string;
+  unit: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+export interface IPurchaseOrder extends Document {
+  poNumber: string;
+  tradeNumber: string;
+  date: Date;
+  supplierName: string;
+  items: IPurchaseOrderItem[];
+  totalAmount: number;
+  status: "pending" | "approved" | "rejected";
+  preparedBy?: string;
+  preparedBySignature?: string;
+  approvedBy?: string;
+  approvedBySignature?: string;
+  rejectionReason?: string;
+  proofUrl?: string;
+}
+
+export interface IDeliveryNoteItem {
+  item: string;
+  specifications: string;
+  unit: string;
+  quantityOrdered: number;
+  quantityDelivered: number;
+}
+
+export interface IDeliveryNote extends Document {
+  dnNumber: string;
+  poNumber: string;
+  tradeNumber: string;
+  date: Date;
+  items: IDeliveryNoteItem[];
+  deliveredBy: { name: string }[];
+  receivingCommittee: { name: string }[];
+  status: "pending" | "approved" | "rejected";
+  approvedBy?: string;
+  approvedBySignature?: string;
+  rejectionReason?: string;
+  proofUrl?: string;
+}
+
+export interface IReceivedNoteItem {
+  item: string;
+  specifications: string;
+  unit: string;
+  quantity: number;
+  remarks?: string;
+}
+
+export interface IReceivedNote extends Document {
+  grnNumber: string;
+  poNumber: string;
+  tradeNumber: string;
+  date: Date;
+  supplierName: string;
+  items: IReceivedNoteItem[];
+  committeeMembers: { name: string }[];
+  status: "pending" | "approved" | "rejected";
+  approvedBy?: string;
+  approvedBySignature?: string;
+  rejectionReason?: string;
+  proofUrl?: string;
+}
+
+export interface IStoreCardEntry {
+  date: Date;
+  qtyReceived: number;
+  qtyRequested: number;
+  balance: number;
+  userName: string;
+}
+
+export interface IStoreCard extends Document {
+  tradeNumber: string;
+  schoolYear: string;
+  itemDescription: string;
+  entries: IStoreCardEntry[];
+  status: "pending" | "approved" | "rejected";
+  preparedBy?: string;
+  preparedBySignature?: string;
+  verifiedBy?: string;
+  verifiedBySignature?: string;
+  rejectionReason?: string;
+  proofUrl?: string;
+}
+
+export interface IRequisitionItem {
+  item: string;
+  quantityRequisitioned: number;
+  quantityReceived: number;
+  observation?: string;
+}
+
+export interface IRequisition extends Document {
+  voucherNumber: string;
+  tradeNumber: string;
+  date: Date;
+  items: IRequisitionItem[];
+  status: "pending" | "approved" | "rejected";
+  requestedBy?: string;
+  requestedBySignature?: string;
+  verifiedByDept?: string;
+  verifiedByDeptSignature?: string;
+  verifiedByLogistics?: string;
+  verifiedByLogisticsSignature?: string;
+  checkedByDHT?: string;
+  checkedByDHTSignature?: string;
+  approvedByHT?: string;
+  approvedByHTSignature?: string;
+  rejectionReason?: string;
+  proofUrl?: string;
+}
+
+export interface IMiniRequisitionItem {
+  item: string;
+  quantityRequisitioned: number;
+  quantityReceived: number;
+  observation?: string;
+}
+
+export interface IMiniRequisition extends Document {
+  voucherNumber: string;
+  tradeNumber: string;
+  date: Date;
+  items: IMiniRequisitionItem[];
+  status: "pending" | "approved" | "rejected";
+  requestedBy?: string;
+  requestedBySignature?: string;
+  verifiedByAssistant?: string;
+  verifiedByAssistantSignature?: string;
+  approvedByDHT?: string;
+  approvedByDHTSignature?: string;
+  rejectionReason?: string;
+  proofUrl?: string;
+}
+
+export interface IMonthlyInventoryItem {
+  item: string;
+  initialStock: number;
+  purchasedStock: number;
+  consumedStock: number;
+  remainingStock: number;
+}
+
+export interface IMonthlyInventory extends Document {
+  tradeNumber: string;
+  schoolYear: string;
+  month: string;
+  items: IMonthlyInventoryItem[];
+  status: "pending" | "approved" | "rejected";
+  preparedBy?: string;
+  preparedBySignature?: string;
+  checkedBy?: string;
+  checkedBySignature?: string;
+  verifiedBy?: string;
+  verifiedBySignature?: string;
+  approvedBy?: string;
+  approvedBySignature?: string;
+  rejectionReason?: string;
+  proofUrl?: string;
+}
+
+export interface IUtilizationReportItem {
+  item: string;
+  quantityReceived: number;
+  totalStudents: number;
+  quantityUtilized: number;
+  balance: number;
+}
+
+export interface IUtilizationReport extends Document {
+  tradeNumber: string;
+  rqfLevel: string;
+  titleOfModule: string;
+  schoolYear: string;
+  dateOfSubmission: Date;
+  items: IUtilizationReportItem[];
+  status: "pending" | "approved" | "rejected";
+  preparedBy?: string;
+  preparedBySignature?: string;
+  checkedBy?: string;
+  checkedBySignature?: string;
+  approvedBy?: string;
+  approvedBySignature?: string;
+  rejectionReason?: string;
+  proofUrl?: string;
 }

@@ -99,3 +99,9 @@ export const handleDeletionRequest = async (bookId: string, status: 'Approved' |
 export const deleteBook = async (id: string) => {
     return await LibraryTable.findByIdAndDelete(id);
 };
+
+export const getBorrowings = async () => {
+    return await Borrowing.find().populate('bookId');
+};
+
+import { Borrowing } from "../../../database/model/borrowing";

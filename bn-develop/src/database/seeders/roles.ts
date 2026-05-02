@@ -13,6 +13,12 @@ export const seedRoles = async () => {
     { roleName: 'stock', description: 'Stock role' },
     { roleName: 'librarian', description: 'Librarian role' },
     { roleName: 'hr', description: 'HR role' },
+    { roleName: 'headteacher', description: 'Head Teacher role' },
+    { roleName: 'dht', description: 'DHT / Head of Dept role' },
+    { roleName: 'logistics', description: 'Logistics role' },
+    { roleName: 'md', description: 'Managing Director role' },
+    { roleName: 'teacher', description: 'Teacher role' },
+    { roleName: 'workshopassistant', description: 'Workshop Assistant role' },
   ];
 
   for (const role of newRoles) {
