@@ -3,12 +3,18 @@ import { useEffect } from "react";
 import { io } from "socket.io-client";
 import { useSession } from "next-auth/react";
 
-const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000", {
-  autoConnect: false,
-});
+const getSocketURL = () => {
+  const url = (process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000").trim();
+  // Ensure the URL has a protocol
+  return url.includes('://') ? url : `https://${url}`;
+};
+
+const socket = typeof window !== "undefined" 
+  ? io(getSocketURL(), { autoConnect: false })
+  : {} as any;
 
 export const joinRoom = async () => {
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && socket.emit) {
     const token = localStorage.getItem("userToken");
     if (token) {
       socket.emit("join", token);

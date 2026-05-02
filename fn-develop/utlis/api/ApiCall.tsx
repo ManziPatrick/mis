@@ -7,8 +7,16 @@ interface CustomSession {
   };
 }
 
+const getBaseURL = () => {
+  const url = (process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000').trim();
+  // Ensure the URL has a protocol
+  const absoluteUrl = url.includes('://') ? url : `https://${url}`;
+  // Remove trailing slash and append /api
+  return `${absoluteUrl.replace(/\/$/, '')}/api`;
+};
+
 const API = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api`,
+  baseURL: getBaseURL(),
   timeout: 40000,
   headers: {
     "Content-Type": "application/json"
@@ -17,7 +25,10 @@ const API = axios.create({
 
 API.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    const session = await getSession() as CustomSession | null;
+    let session: CustomSession | null = null;
+    if (typeof window !== 'undefined') {
+      session = await getSession() as CustomSession | null;
+    }
 
     if (session && session.user.token) {
       config.headers.Authorization = `Bearer ${session.user.token}`;
