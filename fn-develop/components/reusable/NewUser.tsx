@@ -43,15 +43,13 @@ const NewUser = ({ isOpen, setIsOpen, roles, reFetch }: NewUserModalType) => {
                     },
                     onError: (error) => {
                         setIsLoading(false)
-                        const axError:any = error as AxiosError
-                        toast.success(axError?.response?.data?.message)
-
+                        const axError: any = error as AxiosError
+                        toast.error(axError?.response?.data?.message || "An error occurred")
                     }
                 })
 
             } catch (error: any) {
-                toast.success("Somethin went wrong try again later")
-
+                toast.error("Something went wrong, please try again later")
             }
 
         }
@@ -107,7 +105,7 @@ const NewUser = ({ isOpen, setIsOpen, roles, reFetch }: NewUserModalType) => {
                             ) : ""}
                         </div>
                     </div>
-                    `  <Button loading={isLoading} className='flex flex-row gap-[30px] items-center p-3 px-4 bg-[#2E3487] text-white justify-center'>Save</Button>`
+                    <Button loading={isLoading} className='flex flex-row gap-[30px] items-center p-3 px-4 bg-[#2E3487] text-white justify-center'>Save</Button>
                 </form>
 
 

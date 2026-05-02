@@ -7,10 +7,10 @@ export const loginFormikSchema = Yup.object().shape({
 
 export const newUserFormikSchema = Yup.object().shape({
     email: Yup.string().required("Email is required").email("Enter valid email"),
-    firstName: Yup.string().required("Fist name is required"),
+    firstName: Yup.string().required("First name is required"),
     lastName: Yup.string().required("Last name is required"),
     role: Yup.string().required("Role is required"),
-    phoneNumber: Yup.string().required("Phone number is required").min(10, "Phone number must be at least 10 digits").max(10, "Phone number must be at most 15 digits")
+    phoneNumber: Yup.string().required("Phone number is required").min(10, "Phone number must be at least 10 digits").max(15, "Phone number must be at most 15 digits")
 })
 
 

@@ -3,20 +3,30 @@ import socket from "@/app/useUtlis/socket";
 import API from "../api/ApiCall";
 
 const Logout = async () => {
-    const callbackUrl = process.env.NEXT_PUBLIC_BASE_URL || "/";
     try {
-        socket.disconnect()
+        // 1. Disconnect socket
+        socket.disconnect();
+
+        // 2. Notify backend of logout
         try {
             await API.post("/auth/logout");
         } catch (err) {
             console.error("Backend logout failed:", err);
         }
-        await signOut({ redirect: false });
+
+        // 3. Clear all local storage
         localStorage.removeItem("userToken");
+        localStorage.removeItem("currentUserId");
+        // Clear any other relevant storage if needed
+        // localStorage.clear(); // Uncomment if you want a complete wipe
+
+        // 4. Sign out and redirect using NextAuth
+        await signOut({ callbackUrl: "/" });
+
     } catch (error) {
         console.error("Error during logout:", error);
-    } finally {
-        window.location.href = callbackUrl;
+        // Fallback redirect if signOut fails
+        window.location.href = "/";
     }
 };
 
