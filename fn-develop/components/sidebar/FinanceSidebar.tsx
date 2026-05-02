@@ -4,10 +4,7 @@ import Image from 'next/image'
 import { MdDashboardCustomize } from "react-icons/md";
 import { FaMoneyCheckDollar, FaUsers } from "react-icons/fa6";
 import { RiLogoutBoxFill, RiSecurePaymentLine } from 'react-icons/ri';
-import { MdOutlinePassword } from "react-icons/md";
 import { usePathname } from 'next/navigation';
-import { GrTransaction } from 'react-icons/gr';
-import { GiClothes } from 'react-icons/gi';
 import Link from "next/link"
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import Logout from '@/utlis/action/Logout';

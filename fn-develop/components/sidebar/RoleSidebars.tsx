@@ -6,7 +6,7 @@ import { RiLogoutBoxFill } from 'react-icons/ri';
 import { usePathname } from 'next/navigation';
 import Link from "next/link"
 import Logout from '@/utlis/action/Logout';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 const SidebarBase = ({ basePath, title }: { basePath: string, title: string }) => {
     const pathname = usePathname()
@@ -19,8 +19,12 @@ const SidebarBase = ({ basePath, title }: { basePath: string, title: string }) =
             rejectLabel: 'Cancel',
             acceptClassName: ' bg-red-400 text-white p-3 text-[13px] ',
             rejectClassName: ' inline-block mr-2 text-[13px] bg-blue-400 text-white p-3 ',
-            accept: () => Logout(),
+            accept: () => ApproveLogout(),
         });
+    };
+
+    const ApproveLogout = async () => {
+        await Logout()
     };
 
     return (
@@ -44,11 +48,12 @@ const SidebarBase = ({ basePath, title }: { basePath: string, title: string }) =
                 </div>
             </div>
             <div className='flex flex-col gap-[20px] px-4'>
-                <button onClick={confirmLogout} className='w-full text-white px-4 flex flex-row items-center gap-[10px]'>
+                <div onClick={confirmLogout} className='flex flex-row items-center gap-[10px] bg-white rounded-[6px] p-3 cursor-pointer'>
                     <RiLogoutBoxFill size={20} />
-                    <span className='text-[16px] font-[400]'>Logout</span>
-                </button>
+                    <span className='text-[14px] font-[600]'>Sign Out</span>
+                </div>
             </div>
+            <ConfirmDialog />
         </div>
     )
 }

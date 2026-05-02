@@ -3,10 +3,7 @@ import React from 'react'
 import Image from 'next/image'
 import { MdDashboardCustomize } from "react-icons/md";
 import { FaUsers } from "react-icons/fa6";
-import { MdManageAccounts } from "react-icons/md";
-import { CiLogout } from 'react-icons/ci';
 import { RiLogoutBoxFill, RiSecurePaymentLine } from 'react-icons/ri';
-import { MdOutlinePassword } from "react-icons/md";
 import { usePathname } from 'next/navigation';
 import { LuGitPullRequestArrow } from 'react-icons/lu';
 import Link from "next/link"

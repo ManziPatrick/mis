@@ -2,12 +2,10 @@
 import React from 'react'
 import Image from 'next/image'
 import { MdDashboardCustomize, MdAssignmentInd, MdOutlineArticle } from "react-icons/md";
-import { FaComputer, FaMoneyCheckDollar, FaUsers } from "react-icons/fa6";
+import { FaComputer, FaMoneyCheckDollar } from "react-icons/fa6";
 import { RiLogoutBoxFill } from 'react-icons/ri';
-import { MdOutlinePassword } from "react-icons/md";
 import { usePathname } from 'next/navigation';
 import { GrTransaction } from 'react-icons/gr';
-import { GiClothes } from 'react-icons/gi';
 import Link from "next/link"
 import Logout from '@/utlis/action/Logout';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
@@ -30,7 +28,7 @@ const StockSidebar = () => {
     };
 
     const ApproveLogout = async () => {
-        Logout()
+        await Logout()
     }
     return (
         <div className='flex flex-col gap-[20px] bg-[#2E3487] w-full min-h-[100vh] justify-between pb-4'>

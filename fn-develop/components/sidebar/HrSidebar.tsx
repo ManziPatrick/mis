@@ -3,10 +3,7 @@ import React from 'react'
 import Image from 'next/image'
 import { MdDashboardCustomize } from "react-icons/md";
 import { FaUsers } from "react-icons/fa6";
-import { MdManageAccounts } from "react-icons/md";
-import { CiLogout } from 'react-icons/ci';
 import { RiLogoutBoxFill } from 'react-icons/ri';
-import { MdOutlinePassword } from "react-icons/md";
 import { usePathname } from 'next/navigation';
 import Link from "next/link"
 import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
@@ -32,7 +29,7 @@ const HrSidebar = () => {
     };
 
     const ApproveLogout = async () => {
-        Logout()
+        await Logout()
     }
     return (
         <div className='flex flex-col gap-[20px] bg-[#2E3487] w-full min-h-[100vh] justify-between pb-4'>
